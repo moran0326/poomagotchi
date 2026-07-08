@@ -1,0 +1,11 @@
+{
+  "name": "Pookie Lab",
+  "short_name": "Pookie Lab",
+  "start_url": "lab.html",
+  "display": "standalone",
+  "background_color": "#FBF7FE",
+  "theme_color": "#FBF7FE",
+  "icons": [
+    { "src": "icon-lab.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

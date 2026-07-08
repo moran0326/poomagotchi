@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Poomagotchi</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Poomagotchi">
+<meta name="theme-color" content="#FDF6EE">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  :root {
+    --bg:#FDF6EE; --surface:#FFFFFF; --ink:#4B3F3A; --sub:#A3928A; --line:#F0E4D8;
+    --pink:#FF7A9E; --pink-dk:#E25E82; --pink-soft:#FFE8EF;
+    --mint:#57C79B; --mint-dk:#3FA97F; --mint-soft:#E3F7EF;
+    --sky:#6EC6F5; --sky-dk:#4FA6DE; --sky-soft:#E7F5FD;
+    --sun:#FFC94D; --sun-dk:#E5A93A; --sun-soft:#FFF4DC;
+    --lilac:#B79CF2; --lilac-dk:#9878DD; --lilac-soft:#F1EAFD;
+    --disp:'Baloo 2',cursive; --body:'Nunito',sans-serif;
+  }
+  html,body { height:100%; }
+  body { font-family:var(--body); font-weight:700; background:var(--bg); color:var(--ink); overflow:hidden; }
+  #app { height:100dvh; display:flex; flex-direction:column; max-width:520px; margin:0 auto; }
+
+  /* ===== header ===== */
+  header { display:flex; align-items:center; justify-content:space-between;
+    padding:14px 22px 6px; padding-top:calc(12px + env(safe-area-inset-top)); }
+  .logo { font-family:var(--disp); font-weight:800; font-size:21px; color:var(--pink-dk); letter-spacing:.3px; }
+  .logo span { font-size:17px; }
+  .streak-chip { display:flex; align-items:center; gap:5px; background:var(--sun-soft);
+    border:2px solid #F5DFAE; border-radius:99px; padding:5px 12px;
+    font-size:13px; font-weight:900; color:#C98A1B; }
+
+  /* ===== layout ===== */
+  main { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:6px 20px 24px; }
+  .page { display:none; animation:pop .3s cubic-bezier(.2,.9,.3,1.2); }
+  .page.active { display:block; }
+  @keyframes pop { from{opacity:0; transform:translateY(10px) scale(.98);} to{opacity:1; transform:none;} }
+
+  .card { background:var(--surface); border:2px solid var(--line); border-bottom-width:4px;
+    border-radius:24px; padding:20px; margin-bottom:14px; }
+  .eyebrow { font-size:11px; font-weight:900; letter-spacing:1.6px; text-transform:uppercase;
+    color:var(--sub); margin-bottom:10px; }
+
+  /* ===== duo-style buttons ===== */
+  .btn { display:block; width:100%; font-family:var(--disp); font-weight:800; font-size:17px;
+    color:#fff; text-align:center; background:var(--pink); border:none; border-radius:18px;
+    padding:15px; cursor:pointer; box-shadow:0 4px 0 var(--pink-dk); letter-spacing:.4px;
+    transition:transform .06s, box-shadow .06s; user-select:none; -webkit-user-select:none; }
+  .btn:active { transform:translateY(4px); box-shadow:0 0 0 var(--pink-dk); }
+  .btn.mint { background:var(--mint); box-shadow:0 4px 0 var(--mint-dk); }
+  .btn.mint:active { box-shadow:0 0 0 var(--mint-dk); }
+  .btn.sky { background:var(--sky); box-shadow:0 4px 0 var(--sky-dk); }
+  .btn.sky:active { box-shadow:0 0 0 var(--sky-dk); }
+  .btn:disabled { filter:grayscale(.5) opacity(.7); }
+  .btn-sm { width:auto; font-size:14px; padding:10px 18px; border-radius:14px; flex-shrink:0; }
+
+  input, textarea { font-family:var(--body); font-weight:700; width:100%; font-size:15px;
+    color:var(--ink); background:#fff; border:2px solid var(--line); border-bottom-width:4px;
+    border-radius:16px; padding:12px 15px; outline:none; }
+  input:focus, textarea:focus { border-color:#F5C7D4; }
+  ::placeholder { color:#C9BBB2; font-weight:600; }
+
+  /* ===== HOME ===== */
+  .greeting { font-family:var(--disp); font-weight:700; font-size:15px; color:var(--sub);
+    text-align:center; margin:2px 0 12px; }
+  .hero { background:linear-gradient(160deg,#FFE9F0 0%,#FFF7EF 55%,#FFF1DE 100%);
+    border-color:#F7D9E0; text-align:center; position:relative; overflow:hidden; }
+  .hero .eyebrow { color:var(--pink-dk); }
+  .big-days { font-family:var(--disp); font-weight:800; font-size:76px; line-height:1;
+    color:var(--pink-dk); text-shadow:0 3px 0 #F7CBD7; }
+  .big-days small { font-size:24px; font-weight:700; margin-left:2px; }
+  .hms { display:flex; justify-content:center; gap:8px; margin-top:14px; }
+  .hms div { background:rgba(255,255,255,.8); border:2px solid #F7D9E0; border-radius:14px;
+    width:66px; padding:7px 0 5px; }
+  .hms b { font-family:var(--disp); display:block; font-size:22px; color:var(--pink-dk); line-height:1.1; }
+  .hms span { font-size:10px; font-weight:900; letter-spacing:1px; color:#C99AA9; text-transform:uppercase; }
+  .hero .date-line { margin-top:12px; font-size:12.5px; font-weight:800; color:#C99AA9; }
+  .float-heart { position:absolute; opacity:.5; animation:drift 5s ease-in-out infinite alternate; }
+  @keyframes drift { from{transform:translateY(0) rotate(-10deg);} to{transform:translateY(-9px) rotate(10deg);} }
+
+  .duo-row { display:flex; gap:12px; }
+  .duo-row .card { flex:1; margin-bottom:14px; }
+  .stat-num { font-family:var(--disp); font-weight:800; font-size:30px; color:var(--ink); line-height:1.15; }
+  .stat-sub { font-size:12px; font-weight:800; color:var(--sub); }
+
+  .clock-row { display:flex; align-items:center; }
+  .clock { flex:1; text-align:center; }
+  .clock .who { font-size:12px; font-weight:900; color:var(--sub); margin-bottom:3px; }
+  .clock .t { font-family:var(--disp); font-weight:800; font-size:30px; }
+  .clock .d { font-size:11.5px; font-weight:800; color:var(--sub); margin-top:1px; }
+  .clock-heart { font-size:20px; padding:0 8px; }
+
+  #missCounter { text-align:center; font-size:13px; font-weight:800; color:var(--sub); margin-top:10px; }
+  .heart-fly { position:fixed; bottom:110px; font-size:26px; pointer-events:none; z-index:99;
+    animation:fly 2.1s ease-out forwards; }
+  @keyframes fly { 0%{transform:translateY(0) scale(.5); opacity:0;} 12%{opacity:1;}
+    100%{transform:translateY(-58vh) scale(1.35) rotate(14deg); opacity:0;} }
+
+  /* ===== TODAY ===== */
+  .today-date { font-family:var(--disp); font-weight:800; font-size:24px; margin:2px 2px 14px; }
+  .today-date span { color:var(--pink); }
+  .note-card { background:linear-gradient(180deg,#FFFDF6,#FFF6E8); border-color:#F2DFC2; position:relative; }
+  .note-card .tape { position:absolute; top:-11px; left:50%; transform:translateX(-50%) rotate(-2deg);
+    width:86px; height:22px; background:rgba(255,122,158,.30); border-radius:4px; }
+  .note-text { font-size:16.5px; line-height:1.75; font-weight:700; }
+  .note-sign { text-align:right; font-family:var(--disp); color:var(--pink-dk); font-size:14px; margin-top:12px; }
+  .sched-item { display:flex; gap:12px; padding:9px 0; align-items:baseline; }
+  .sched-item + .sched-item { border-top:2px dashed #F5EADF; }
+  .sched-time { font-family:var(--disp); font-weight:800; font-size:14px; color:var(--sky-dk);
+    background:var(--sky-soft); border-radius:10px; padding:3px 10px; flex-shrink:0; }
+  .sched-text { font-size:15px; font-weight:700; }
+  .horo-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:9px; }
+  .horo-sign { font-family:var(--disp); font-weight:800; font-size:14px; color:var(--lilac-dk);
+    background:var(--lilac-soft); border-radius:99px; padding:4px 13px; }
+  .horo-src { font-size:10.5px; font-weight:900; letter-spacing:.8px; text-transform:uppercase; color:var(--sub); }
+  .horo-text { font-size:14.5px; font-weight:700; line-height:1.7; }
+  .lucky-row { display:flex; gap:10px; margin-top:10px; }
+  .lucky { flex:1; display:flex; align-items:center; gap:9px; background:#FAF3EA;
+    border-radius:16px; padding:10px 13px; font-size:13px; font-weight:800; }
+  .lucky .swatch { width:22px; height:22px; border-radius:8px; border:2px solid rgba(0,0,0,.08); flex-shrink:0; }
+  .lucky .num { font-family:var(--disp); font-size:20px; color:var(--lilac-dk); }
+  .wx-row { display:flex; gap:12px; }
+  .wx { flex:1; text-align:center; border-radius:18px; padding:14px 8px; }
+  .wx.us { background:var(--sky-soft); } .wx.cn { background:var(--sun-soft); }
+  .wx .city { font-size:12px; font-weight:900; color:var(--sub); }
+  .wx .ico { font-size:32px; margin:4px 0 2px; display:block; }
+  .wx .temp { font-family:var(--disp); font-weight:800; font-size:22px; }
+  .wx .range { font-size:11.5px; font-weight:800; color:var(--sub); }
+
+  /* ===== PLANT ===== */
+  .plant-stage-name { font-family:var(--disp); font-weight:800; font-size:22px; text-align:center; }
+  .plant-mood { text-align:center; font-size:13.5px; font-weight:800; color:var(--sub); margin-top:2px; }
+  .plant-scene { position:relative; height:250px; margin:10px 0 4px; border-radius:20px;
+    background:linear-gradient(180deg,#DFF3FD 0%,#EFFAF3 62%, #D8EFC9 62%, #CBE7B8 100%);
+    overflow:hidden; border:2px solid #D8E9DC; }
+  .plant-sun { position:absolute; top:14px; right:18px; font-size:34px; animation:drift 4s ease-in-out infinite alternate; }
+  .plant-cloud { position:absolute; top:24px; left:16px; font-size:26px; opacity:.8; animation:drift 6s ease-in-out infinite alternate-reverse; }
+  #plantEmoji { position:absolute; bottom:58px; left:50%; transform:translateX(-50%);
+    font-size:64px; transition:font-size .6s; line-height:1; }
+  #plantEmoji.wilt { filter:grayscale(.75); transform:translateX(-50%) rotate(14deg); }
+  .plant-pot { position:absolute; bottom:14px; left:50%; transform:translateX(-50%); font-size:44px; }
+  .drop { position:absolute; font-size:20px; animation:dropfall 1s ease-in forwards; z-index:5; }
+  @keyframes dropfall { from{transform:translateY(-70px); opacity:1;} to{transform:translateY(0); opacity:0;} }
+  .progress-wrap { margin:14px 0 6px; }
+  .progress-track { height:16px; background:#F3E9DD; border-radius:99px; overflow:hidden; }
+  .progress-fill { height:100%; background:linear-gradient(90deg,var(--mint),#8FE0BC); border-radius:99px;
+    transition:width .8s cubic-bezier(.2,.9,.3,1.1); min-width:16px; }
+  .progress-caption { display:flex; justify-content:space-between; font-size:11.5px; font-weight:900;
+    color:var(--sub); margin-top:6px; }
+  .water-week { display:flex; justify-content:space-between; margin:12px 2px 16px; }
+  .wday { text-align:center; font-size:10.5px; font-weight:900; color:var(--sub); }
+  .wday .dot { width:30px; height:30px; border-radius:50%; background:#F3E9DD; margin:0 auto 4px;
+    display:flex; align-items:center; justify-content:center; font-size:15px; }
+  .wday .dot.yes { background:var(--sky-soft); }
+  .wday.today .dot { outline:2.5px solid var(--sky); outline-offset:2px; }
+
+  /* ===== TODOS ===== */
+  .task { display:flex; align-items:center; gap:13px; padding:13px 2px; }
+  .task + .task { border-top:2px solid #FAF1E7; }
+  .task-check { width:30px; height:30px; border-radius:11px; border:2.5px solid #EBD9CB; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    font-size:16px; color:#fff; font-weight:900; transition:.15s; background:#fff; }
+  .task.done .task-check { background:var(--mint); border-color:var(--mint-dk); box-shadow:0 2px 0 var(--mint-dk); }
+  .task-emoji { font-size:22px; }
+  .task-text { flex:1; font-size:15.5px; font-weight:800; }
+  .task.done .task-text { color:var(--sub); text-decoration:line-through; }
+  .task-del { border:none; background:none; color:#DCC9BC; font-size:15px; cursor:pointer; padding:4px; }
+  .task-progress { font-family:var(--disp); font-weight:800; font-size:15px; color:var(--mint-dk); }
+  .add-row { display:flex; gap:9px; margin-top:2px; }
+
+  /* praise overlay */
+  #praise { position:fixed; inset:0; background:rgba(255,240,245,.96); z-index:300; display:none;
+    flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px; }
+  #praise .pj { font-size:78px; animation:bounce .7s ease infinite alternate; }
+  @keyframes bounce { from{transform:translateY(0) scale(1);} to{transform:translateY(-16px) scale(1.06);} }
+  #praise h2 { font-family:var(--disp); font-weight:800; font-size:30px; color:var(--pink-dk); margin:14px 0 8px; }
+  #praise p { font-size:16px; font-weight:800; color:var(--ink); max-width:300px; line-height:1.6; }
+  #praise .btn { max-width:240px; margin-top:26px; }
+  .confetti { position:fixed; top:-20px; z-index:301; font-size:20px; animation:confall 2.6s linear forwards; }
+  @keyframes confall { to{ transform:translateY(110vh) rotate(720deg);} }
+
+  /* ===== THOUGHTS ===== */
+  .thought { background:var(--surface); border:2px solid var(--line); border-bottom-width:4px;
+    border-radius:20px; padding:16px 18px; margin-bottom:12px; }
+  .thought p { font-size:15px; font-weight:700; line-height:1.7; white-space:pre-wrap; }
+  .thought .meta { display:flex; justify-content:space-between; margin-top:9px;
+    font-size:11.5px; font-weight:900; color:var(--sub); }
+  .thought .meta button { border:none; background:none; color:#DCC9BC; font-weight:900;
+    font-size:11.5px; cursor:pointer; font-family:var(--body); }
+  .compose textarea { resize:none; height:76px; margin-bottom:10px; }
+  .empty { text-align:center; color:var(--sub); font-size:13.5px; font-weight:800; padding:18px 0; }
+
+  /* ===== tab bar ===== */
+  nav { display:flex; background:rgba(255,255,255,.94); backdrop-filter:blur(14px);
+    border-top:2px solid var(--line); padding:8px 8px calc(10px + env(safe-area-inset-bottom)); }
+  nav button { flex:1; border:none; background:none; cursor:pointer; font-family:var(--body);
+    display:flex; flex-direction:column; align-items:center; gap:3px; padding:5px 0; }
+  nav .nico { font-size:21px; width:42px; height:32px; display:flex; align-items:center; justify-content:center;
+    border-radius:12px; filter:grayscale(.9) opacity(.55); transition:.18s; }
+  nav button span { font-size:9.5px; font-weight:900; letter-spacing:.6px; text-transform:uppercase; color:var(--sub); }
+  nav button.on .nico { filter:none; background:var(--pink-soft); transform:translateY(-1px); }
+  nav button.on span { color:var(--pink-dk); }
+
+  #toast { position:fixed; top:14%; left:50%; transform:translateX(-50%); background:var(--ink);
+    color:#fff; font-weight:800; font-size:14px; padding:11px 22px; border-radius:99px;
+    z-index:400; display:none; box-shadow:0 6px 18px rgba(75,63,58,.3); }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="logo">poomagotchi <span>🌱</span></div>
+    <div class="streak-chip">🔥 <span id="streakNum">0</span></div>
+  </header>
+
+  <main id="main">
+    <!-- ================= HOME ================= -->
+    <section class="page active" id="page-home">
+      <div class="greeting" id="greeting"></div>
+      <div class="card hero">
+        <span class="float-heart" style="top:16px;left:18px;font-size:19px;">🩷</span>
+        <span class="float-heart" style="top:44px;right:22px;font-size:14px;animation-delay:1.2s;">💗</span>
+        <span class="float-heart" style="bottom:18px;left:30px;font-size:15px;animation-delay:2.2s;">✨</span>
+        <div class="eyebrow" id="cdLabel">I'll be home in</div>
+        <div class="big-days"><span id="cdD">–</span><small>days</small></div>
+        <div class="hms">
+          <div><b id="cdH">–</b><span>hrs</span></div>
+          <div><b id="cdM">–</b><span>min</span></div>
+          <div><b id="cdS">–</b><span>sec</span></div>
+        </div>
+        <div class="date-line" id="cdDate"></div>
+      </div>
+
+      <div class="duo-row">
+        <div class="card">
+          <div class="eyebrow">Together for</div>
+          <div class="stat-num" id="togetherDays">–</div>
+          <div class="stat-sub">days &amp; counting 💞</div>
+        </div>
+        <div class="card">
+          <div class="eyebrow">Hearts sent</div>
+          <div class="stat-num" id="heartTotal">0</div>
+          <div class="stat-sub">I feel every single one</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="eyebrow">Your two time zones</div>
+        <div class="clock-row">
+          <div class="clock">
+            <div class="who" id="hisLabel">YOU · SHARON</div>
+            <div class="t" id="clockHis">–:–</div>
+            <div class="d" id="clockHisD"></div>
+          </div>
+          <div class="clock-heart">💌</div>
+          <div class="clock">
+            <div class="who" id="herLabel">ME · BEIJING</div>
+            <div class="t" id="clockHer">–:–</div>
+            <div class="d" id="clockHerD"></div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn" id="missBtn">Missing me? Tap here 💗</button>
+      <div id="missCounter"></div>
+    </section>
+
+    <!-- ================= TODAY ================= -->
+    <section class="page" id="page-today">
+      <div class="today-date" id="todayDate"></div>
+
+      <div class="card note-card">
+        <div class="tape"></div>
+        <div class="eyebrow" style="color:#C99A5B;">Today's note from me 💌</div>
+        <div class="note-text" id="noteText">I haven't written today's note yet… check back soon 🕊️</div>
+        <div class="note-sign" id="noteSign"></div>
+      </div>
+
+      <div class="card">
+        <div class="eyebrow">What I'm up to today 🗓️</div>
+        <div id="schedList"><div class="empty">No plans posted yet today ✨</div></div>
+      </div>
+
+      <div class="card">
+        <div class="eyebrow">Daily horoscope 🔮</div>
+        <div class="horo-head">
+          <span class="horo-sign" id="hSign">✨</span>
+          <span class="horo-src">real stars, real data</span>
+        </div>
+        <p class="horo-text" id="hText">Reading the stars…</p>
+        <div class="lucky-row">
+          <div class="lucky"><span class="swatch" id="fSwatch"></span><span id="fColor"></span></div>
+          <div class="lucky">Lucky no. <span class="num" id="fNum"></span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="eyebrow">Weather where you both are ⛅</div>
+        <div class="wx-row">
+          <div class="wx us">
+            <div class="city">SHARON, MA</div>
+            <span class="ico" id="wxUsIco">–</span>
+            <div class="temp" id="wxUsTemp">–</div>
+            <div class="range" id="wxUsRange"></div>
+          </div>
+          <div class="wx cn">
+            <div class="city">BEIJING</div>
+            <span class="ico" id="wxCnIco">–</span>
+            <div class="temp" id="wxCnTemp">–</div>
+            <div class="range" id="wxCnRange"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PLANT ================= -->
+    <section class="page" id="page-plant">
+      <div class="card" style="padding-bottom:16px;">
+        <div class="plant-stage-name" id="plantStage">Sprout</div>
+        <div class="plant-mood" id="plantMood"></div>
+        <div class="plant-scene" id="plantScene">
+          <span class="plant-sun">☀️</span>
+          <span class="plant-cloud">☁️</span>
+          <span id="plantEmoji">🌱</span>
+          <span class="plant-pot">🪴</span>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-track"><div class="progress-fill" id="plantFill" style="width:4%;"></div></div>
+          <div class="progress-caption"><span>planted 🌰</span><span id="plantPct"></span><span>I'm home 🥚</span></div>
+        </div>
+        <div class="water-week" id="waterWeek"></div>
+        <button class="btn sky" id="waterBtn">Water me 💧</button>
+      </div>
+      <div class="card" style="background:var(--mint-soft); border-color:#CBE9DB;">
+        <p style="font-size:13.5px; font-weight:800; line-height:1.65; color:#3E8E6E;">
+          This little plant grows as my homecoming gets closer — but only if you water it every day.
+          And yes, I can see how well you're taking care of it. No pressure 👀
+        </p>
+      </div>
+    </section>
+
+    <!-- ================= TODOS ================= -->
+    <section class="page" id="page-todos">
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:baseline;">
+          <div class="eyebrow" style="margin-bottom:2px;">Today's pookie quests ⚔️</div>
+          <div class="task-progress" id="taskProgress">0/0</div>
+        </div>
+        <div id="taskList" style="margin-top:8px;"></div>
+      </div>
+      <div class="add-row">
+        <input id="taskInput" placeholder="Add your own quest…" maxlength="40">
+        <button class="btn mint btn-sm" id="taskAddBtn">Add</button>
+      </div>
+    </section>
+
+    <!-- ================= THOUGHTS ================= -->
+    <section class="page" id="page-thoughts">
+      <div class="card compose">
+        <div class="eyebrow">Random thoughts 💭 (I read these)</div>
+        <textarea id="thoughtInput" placeholder="Brain dump anything… I'm nosy (affectionate)"></textarea>
+        <button class="btn" id="thoughtBtn" style="background:var(--lilac); box-shadow:0 4px 0 var(--lilac-dk);">Post it 💜</button>
+      </div>
+      <div id="thoughtList"></div>
+    </section>
+  </main>
+
+  <nav>
+    <button id="tab-home" class="on" data-p="home"><span class="nico">🏠</span><span>Home</span></button>
+    <button id="tab-today" data-p="today"><span class="nico">☀️</span><span>Today</span></button>
+    <button id="tab-plant" data-p="plant"><span class="nico">🌱</span><span>Plant</span></button>
+    <button id="tab-todos" data-p="todos"><span class="nico">✅</span><span>Quests</span></button>
+    <button id="tab-thoughts" data-p="thoughts"><span class="nico">💭</span><span>Blog</span></button>
+  </nav>
+</div>
+
+<div id="praise">
+  <div class="pj">🥳</div>
+  <h2>ALL QUESTS DONE!</h2>
+  <p id="praiseLine">I'm SO proud of you. Officially the best boyfriend in (at least) two time zones.</p>
+  <button class="btn" onclick="document.getElementById('praise').style.display='none'">Thanks, I know 😌</button>
+</div>
+<div id="toast"></div>
+
+<script type="module">
+/* ============================================================
+   POOMAGOTCHI — his side 🌱
+   Demo mode: data lives in localStorage.
+   To go live: paste the Firebase config below (same in lab.html)
+   ============================================================ */
+const FIREBASE_CONFIG = null; /* e.g. { apiKey:"...", authDomain:"...", projectId:"..." } */
+
+/* ---------- data layer (Firebase w/ localStorage fallback) ---------- */
+let fs = null, fsDoc, fsSetDoc, fsOnSnapshot;
+const localSubs = {};
+if (FIREBASE_CONFIG) {
+  const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+  const { getFirestore, doc, setDoc, onSnapshot } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+  fs = getFirestore(initializeApp(FIREBASE_CONFIG));
+  fsDoc = doc; fsSetDoc = setDoc; fsOnSnapshot = onSnapshot;
+}
+const DB = {
+  subscribe(key, cb) {
+    if (fs) { fsOnSnapshot(fsDoc(fs, 'pookie', key), s => cb(s.exists() ? s.data().v : null)); }
+    else {
+      (localSubs[key] = localSubs[key] || []).push(cb);
+      cb(DB._lget(key));
+    }
+  },
+  async set(key, v) {
+    if (fs) { await fsSetDoc(fsDoc(fs, 'pookie', key), { v }); }
+    else {
+      localStorage.setItem('pk_' + key, JSON.stringify(v));
+      (localSubs[key] || []).forEach(cb => cb(v));
+    }
+  },
+  _lget(key) { try { const s = localStorage.getItem('pk_' + key); return s === null ? null : JSON.parse(s); } catch(e){ return null; } }
+};
+
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2, '0');
+function dateKey(d = new Date()) { return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+function seededRand(seed) { let h = 0; for (const c of seed) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return () => { h = (h * 1664525 + 1013904223) >>> 0; return h / 4294967296; }; }
+function toast(t) { const el = $('toast'); el.textContent = t; el.style.display = 'block';
+  clearTimeout(el._t); el._t = setTimeout(() => el.style.display = 'none', 1800); }
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+/* ---------- state (live-updated by subscriptions) ---------- */
+let meta = { herName:'Pookie', hisName:'Bub', returnDate:'2026-08-25', anniversary:'2025-04-04',
+             plantStart:'2026-07-02', sign:'aries', hisTz:'America/New_York', herTz:'Asia/Shanghai' };
+let hearts = { count: 0 };
+let tasks = null;          // {list:[{id,emoji,text,byHim}]}
+let checks = {};           // {taskId:true}
+let plant = { watered: {} };
+let thoughts = { list: [] };
+let note = null, sched = null;
+
+const DEFAULT_TASKS = { list: [
+  { id:'gym',   emoji:'💪', text:'Work out' },
+  { id:'zh',    emoji:'🀄', text:'Practice Chinese' },
+  { id:'water', emoji:'🚰', text:'Drink enough water' },
+  { id:'text',  emoji:'📱', text:'Text your pookie' },
+]};
+
+/* ---------- nav ---------- */
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(x => x.classList.remove('on'));
+  $('page-' + b.dataset.p).classList.add('active'); b.classList.add('on');
+});
+
+/* ---------- HOME ---------- */
+function renderHome() {
+  $('cdDate').textContent = `✈️  ${new Date(meta.returnDate + 'T00:00:00')
+    .toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' })}`;
+}
+function tick() {
+  const now = new Date();
+  const diff = new Date(meta.returnDate + 'T00:00:00') - now;
+  if (diff <= 0) { $('cdLabel').textContent = `I'M HOME!! COME GET ME 🎉`;
+    $('cdD').textContent = 0; $('cdH').textContent = $('cdM').textContent = $('cdS').textContent = '00'; }
+  else {
+    $('cdD').textContent = Math.floor(diff / 864e5);
+    $('cdH').textContent = pad(Math.floor(diff % 864e5 / 36e5));
+    $('cdM').textContent = pad(Math.floor(diff % 36e5 / 6e4));
+    $('cdS').textContent = pad(Math.floor(diff % 6e4 / 1e3));
+  }
+  $('togetherDays').textContent = Math.floor((now - new Date(meta.anniversary + 'T00:00:00')) / 864e5) + 1;
+  const ft = tz => new Intl.DateTimeFormat('en-US', { hour:'numeric', minute:'2-digit', hour12:true, timeZone:tz }).format(now).replace(' ','');
+  const fd = tz => new Intl.DateTimeFormat('en-US', { weekday:'short', month:'short', day:'numeric', timeZone:tz }).format(now);
+  $('clockHis').textContent = ft(meta.hisTz); $('clockHisD').textContent = fd(meta.hisTz);
+  $('clockHer').textContent = ft(meta.herTz); $('clockHerD').textContent = fd(meta.herTz);
+  const h = now.getHours();
+  $('greeting').textContent = h < 5 ? 'It’s late… dream of me 🌙' : h < 12 ? 'Morning, sunshine ☀️ One day closer.'
+    : h < 17 ? 'Afternoon check-in 🍵 Doing okay?' : h < 22 ? 'Evening! Time to wind down 🌆' : 'Go to bed soon, or else 😤';
+}
+tick(); setInterval(tick, 1000);
+
+$('missBtn').onclick = e => {
+  DB.set('hearts', { count: (hearts.count || 0) + 1, last: Date.now() });
+  for (let i = 0; i < 6; i++) {
+    const s = document.createElement('span'); s.className = 'heart-fly';
+    s.textContent = ['💗','💕','🩷','💖','✨'][Math.floor(Math.random()*5)];
+    s.style.left = (e.clientX - 35 + Math.random()*70) + 'px';
+    s.style.animationDelay = (Math.random()*.35) + 's';
+    document.body.appendChild(s); setTimeout(() => s.remove(), 2400);
+  }
+};
+
+/* ---------- TODAY ---------- */
+$('todayDate').innerHTML = new Date().toLocaleDateString('en-US', { weekday:'long' }) +
+  ', <span>' + new Date().toLocaleDateString('en-US', { month:'long', day:'numeric' }) + '</span>';
+
+function renderNote() {
+  if (note && note.text) { $('noteText').textContent = note.text;
+    $('noteSign').textContent = `— your ${meta.herName} ♡`; }
+  else { $('noteText').textContent = 'I haven’t written today’s note yet… check back soon 🕊️';
+    $('noteSign').textContent = ''; }
+}
+function renderSched() {
+  const items = (sched && sched.items) || [];
+  $('schedList').innerHTML = items.length ? items.map(i =>
+    `<div class="sched-item"><span class="sched-time">${esc(i.time || '·')}</span>
+     <span class="sched-text">${esc(i.text)}</span></div>`).join('')
+    : '<div class="empty">No plans posted yet today ✨</div>';
+}
+
+/* daily horoscope — real data from horoscope-app-api (sign is set in Pookie Lab) */
+const SIGNS = { aries:'♈', taurus:'♉', gemini:'♊', cancer:'♋', leo:'♌', virgo:'♍',
+  libra:'♎', scorpio:'♏', sagittarius:'♐', capricorn:'♑', aquarius:'♒', pisces:'♓' };
+let horoLoaded = null;
+async function loadHoroscope() {
+  const sign = (meta.sign || 'aries').toLowerCase();
+  if (horoLoaded === sign + dateKey()) return;
+  horoLoaded = sign + dateKey();
+  $('hSign').textContent = `${SIGNS[sign] || '✨'} ${sign.charAt(0).toUpperCase() + sign.slice(1)}`;
+  try {
+    const r = await fetch(`https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily?sign=${sign}&day=TODAY`);
+    const j = await r.json();
+    $('hText').textContent = j.data.horoscope;
+  } catch(e) {
+    $('hText').textContent = 'The stars are unreachable right now 🌌 — check back when you’re online.';
+    horoLoaded = null;
+  }
+}
+/* lucky color & number — deterministic from the date (numerology-style), same result all day */
+const F_COLORS = [['Coral pink','#FF7A9E'],['Mint green','#57C79B'],['Sky blue','#6EC6F5'],['Butter yellow','#FFC94D'],
+  ['Lilac','#B79CF2'],['Peach','#FFB088'],['Sage','#9CBF88'],['Cloud white','#F4F1EC'],['Cocoa','#9C6B4F'],['Rose red','#E8556D']];
+function renderFortune() {
+  const r = seededRand('pookie-' + dateKey());
+  const c = F_COLORS[Math.floor(r()*F_COLORS.length)];
+  $('fColor').textContent = c[0]; $('fSwatch').style.background = c[1];
+  $('fNum').textContent = 1 + Math.floor(r()*88);
+}
+renderFortune();
+
+/* weather */
+const WX_ICON = c => c===0?'☀️':c<=2?'🌤️':c===3?'☁️':c<=48?'🌫️':c<=57?'🌦️':c<=67?'🌧️':c<=77?'❄️':c<=82?'🌦️':c<=86?'🌨️':'⛈️';
+async function loadWx(lat, lon, tz, p) {
+  try {
+    const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=${encodeURIComponent(tz)}&temperature_unit=fahrenheit`);
+    const j = await r.json();
+    $(p+'Ico').textContent = WX_ICON(j.current.weather_code);
+    $(p+'Temp').textContent = Math.round(j.current.temperature_2m) + '°F';
+    $(p+'Range').textContent = `${Math.round(j.daily.temperature_2m_min[0])}° / ${Math.round(j.daily.temperature_2m_max[0])}°`;
+  } catch(e) { $(p+'Temp').textContent = '–'; $(p+'Ico').textContent = '📡'; }
+}
+loadWx(42.12, -71.18, 'America/New_York', 'wxUs');
+loadWx(39.90, 116.41, 'Asia/Shanghai', 'wxCn');
+
+/* ---------- PLANT ---------- */
+const STAGES = [
+  { at:0,   emoji:'🌰', size:38,  name:'A tiny seed',      },
+  { at:.10, emoji:'🌱', size:52,  name:'A hopeful sprout'  },
+  { at:.30, emoji:'🌿', size:72,  name:'Getting leafy!'    },
+  { at:.55, emoji:'☘️', size:92,  name:'Growing strong'    },
+  { at:.78, emoji:'🌷', size:108, name:'A bud! Almost…'    },
+];
+function plantProgress() {
+  const a = new Date(meta.plantStart + 'T00:00:00'), b = new Date(meta.returnDate + 'T00:00:00');
+  return Math.max(0, Math.min(1, (Date.now() - a) / (b - a)));
+}
+function renderPlant() {
+  const p = plantProgress();
+  const el = $('plantEmoji');
+  if (p >= 1) { el.textContent = '🥚'; el.style.fontSize = '96px';
+    $('plantStage').textContent = 'It bloomed… an EGG?!';
+    $('plantMood').textContent = 'Come get me — we’ll write the rest of the story together 💛';
+    $('waterBtn').style.display = 'none';
+  } else {
+    let st = STAGES[0]; for (const s of STAGES) if (p >= s.at) st = s;
+    el.textContent = st.emoji; el.style.fontSize = st.size + 'px';
+    $('plantStage').textContent = st.name;
+    const today = dateKey(), yest = dateKey(new Date(Date.now() - 864e5));
+    const w = plant.watered || {};
+    el.classList.remove('wilt');
+    if (w[today]) $('plantMood').textContent = 'Watered today — thriving, just like us 🥰';
+    else if (w[yest]) $('plantMood').textContent = 'A little thirsty… water me? 🥺';
+    else { $('plantMood').textContent = 'WILTING. I can see this, you know 🥀'; el.classList.add('wilt'); }
+    $('waterBtn').style.display = 'block';
+    $('waterBtn').disabled = !!w[today];
+    $('waterBtn').textContent = w[today] ? 'Watered today ✓' : 'Water me 💧';
+  }
+  $('plantFill').style.width = Math.max(4, Math.round(p*100)) + '%';
+  $('plantPct').textContent = Math.round(p*100) + '% grown';
+  /* streak + last 7 days */
+  const w = plant.watered || {};
+  let streak = 0; for (let i = 0; ; i++) {
+    const k = dateKey(new Date(Date.now() - i*864e5));
+    if (w[k]) streak++; else if (i === 0) continue; else break;
+    if (i > 400) break;
+  }
+  $('streakNum').textContent = streak;
+  let week = '';
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(Date.now() - i*864e5), k = dateKey(d);
+    week += `<div class="wday ${i===0?'today':''}"><div class="dot ${w[k]?'yes':''}">${w[k]?'💧':''}</div>
+      ${d.toLocaleDateString('en-US',{weekday:'narrow'})}</div>`;
+  }
+  $('waterWeek').innerHTML = week;
+}
+$('waterBtn').onclick = () => {
+  const w = { ...(plant.watered || {}) }; w[dateKey()] = true;
+  DB.set('plant', { watered: w, lastWatered: Date.now() });
+  const scene = $('plantScene');
+  for (let i = 0; i < 7; i++) {
+    const d = document.createElement('span'); d.className = 'drop'; d.textContent = '💧';
+    d.style.left = (34 + Math.random()*32) + '%'; d.style.bottom = (90 + Math.random()*60) + 'px';
+    d.style.animationDelay = (Math.random()*.5) + 's';
+    scene.appendChild(d); setTimeout(() => d.remove(), 1600);
+  }
+  toast('Glug glug… it looks happier 🌱');
+};
+
+/* ---------- TODOS ---------- */
+function renderTasks() {
+  if (!tasks) return;
+  const list = tasks.list || [];
+  const doneCount = list.filter(t => checks[t.id]).length;
+  $('taskProgress').textContent = `${doneCount}/${list.length}`;
+  $('taskList').innerHTML = list.length ? list.map(t =>
+    `<div class="task ${checks[t.id] ? 'done' : ''}">
+      <div class="task-check" data-id="${t.id}">${checks[t.id] ? '✓' : ''}</div>
+      <span class="task-emoji">${t.emoji || '⭐'}</span>
+      <span class="task-text">${esc(t.text)}</span>
+      ${t.byHim ? `<button class="task-del" data-del="${t.id}">✕</button>` : ''}
+    </div>`).join('') : '<div class="empty">No quests yet — I’ll add some 👀</div>';
+  $('taskList').querySelectorAll('.task-check').forEach(el => el.onclick = () => toggleTask(el.dataset.id));
+  $('taskList').querySelectorAll('[data-del]').forEach(el => el.onclick = () => {
+    DB.set('tasks', { list: tasks.list.filter(t => t.id !== el.dataset.del) });
+  });
+}
+function toggleTask(id) {
+  const d = { ...checks }; if (d[id]) delete d[id]; else d[id] = true;
+  DB.set('check-' + dateKey(), { done: d });
+  const list = tasks.list || [];
+  if (list.length && list.every(t => d[t.id])) setTimeout(celebrate, 350);
+}
+function celebrate() {
+  $('praise').style.display = 'flex';
+  for (let i = 0; i < 26; i++) {
+    const c = document.createElement('span'); c.className = 'confetti';
+    c.textContent = ['🎉','💖','⭐','🌸','✨','🎊'][Math.floor(Math.random()*6)];
+    c.style.left = Math.random()*100 + 'vw'; c.style.animationDelay = (Math.random()*.9) + 's';
+    c.style.fontSize = (14 + Math.random()*14) + 'px';
+    document.body.appendChild(c); setTimeout(() => c.remove(), 3600);
+  }
+}
+$('taskAddBtn').onclick = () => {
+  const v = $('taskInput').value.trim(); if (!v) return;
+  DB.set('tasks', { list: [ ...(tasks.list || []), { id:'h' + Date.now(), emoji:'⭐', text:v, byHim:true } ] });
+  $('taskInput').value = '';
+};
+
+/* ---------- THOUGHTS ---------- */
+function renderThoughts() {
+  const list = thoughts.list || [];
+  $('thoughtList').innerHTML = list.length ? list.map(t =>
+    `<div class="thought"><p>${esc(t.text)}</p>
+      <div class="meta"><span>${new Date(t.ts).toLocaleDateString('en-US',{month:'short',day:'numeric'})} ·
+      ${new Date(t.ts).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}</span>
+      <button data-tdel="${t.id}">delete</button></div></div>`).join('')
+    : '<div class="empty">Nothing yet. First thought free 💭</div>';
+  $('thoughtList').querySelectorAll('[data-tdel]').forEach(el => el.onclick = () => {
+    DB.set('thoughts', { list: thoughts.list.filter(t => t.id !== el.dataset.tdel) });
+  });
+}
+$('thoughtBtn').onclick = () => {
+  const v = $('thoughtInput').value.trim(); if (!v) return;
+  DB.set('thoughts', { list: [ { id:'t' + Date.now(), text:v, ts:Date.now() }, ...(thoughts.list || []) ] });
+  $('thoughtInput').value = ''; toast('Posted — I’m definitely already reading it 💜');
+};
+
+/* ---------- subscriptions (must run after all definitions) ---------- */
+DB.subscribe('meta', v => { if (v) meta = { ...meta, ...v }; renderHome(); renderPlant(); loadHoroscope(); });
+DB.subscribe('hearts', v => { hearts = v || { count:0 }; $('heartTotal').textContent = hearts.count;
+  $('missCounter').textContent = hearts.count ? `You've missed me ${hearts.count} time${hearts.count>1?'s':''} 💘` : ''; });
+DB.subscribe('tasks', v => { tasks = v || DEFAULT_TASKS; renderTasks(); });
+DB.subscribe('check-' + dateKey(), v => { checks = (v && v.done) || {}; renderTasks(); });
+DB.subscribe('plant', v => { plant = v || { watered:{} }; renderPlant(); });
+DB.subscribe('thoughts', v => { thoughts = v || { list: [] }; renderThoughts(); });
+DB.subscribe('note-' + dateKey(), v => { note = v; renderNote(); });
+DB.subscribe('sched-' + dateKey(), v => { sched = v; renderSched(); });
+
+/* ---------- PWA ---------- */
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+
+/* ---------- demo seed (only when empty & no Firebase) ---------- */
+if (!fs && !DB._lget('note-' + dateKey())) {
+  DB.set('note-' + dateKey(), { text: 'Good morning bub ☀️ I dreamt about our hotpot date. Eat properly today or I’ll know. Love you the most!' });
+  DB.set('sched-' + dateKey(), { items: [
+    { time:'10:00', text:'Coffee with Ivy ☕' },
+    { time:'14:00', text:'Studio time — new project!' },
+    { time:'21:00', text:'Calling YOU 📞 don’t be late' } ] });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Pookie Lab</title>
+<link rel="manifest" href="manifest-lab.json">
+<link rel="apple-touch-icon" href="icon-lab.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pookie Lab">
+<meta name="theme-color" content="#FBF7FE">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  :root {
+    --bg:#FBF7FE; --surface:#FFFFFF; --ink:#453A4E; --sub:#A195AC; --line:#EFE6F6;
+    --prim:#B79CF2; --prim-dk:#9878DD; --prim-soft:#F1EAFD;
+    --pink:#FF7A9E; --pink-dk:#E25E82; --pink-soft:#FFE8EF;
+    --mint:#57C79B; --mint-dk:#3FA97F; --mint-soft:#E3F7EF;
+    --sky:#6EC6F5; --sky-dk:#4FA6DE; --sky-soft:#E7F5FD;
+    --sun:#FFC94D; --sun-soft:#FFF4DC;
+    --disp:'Baloo 2',cursive; --body:'Nunito',sans-serif;
+  }
+  html,body { height:100%; }
+  body { font-family:var(--body); font-weight:700; background:var(--bg); color:var(--ink); overflow:hidden; }
+  #app { height:100dvh; display:flex; flex-direction:column; max-width:520px; margin:0 auto; }
+  header { display:flex; align-items:center; justify-content:space-between;
+    padding:14px 22px 6px; padding-top:calc(12px + env(safe-area-inset-top)); }
+  .logo { font-family:var(--disp); font-weight:800; font-size:21px; color:var(--prim-dk); }
+  .live-chip { display:flex; align-items:center; gap:6px; font-size:11.5px; font-weight:900;
+    color:var(--sub); background:#fff; border:2px solid var(--line); border-radius:99px; padding:5px 12px; }
+  .live-dot { width:8px; height:8px; border-radius:50%; background:#FFC94D; }
+  .live-dot.on { background:var(--mint); box-shadow:0 0 0 3px var(--mint-soft); }
+  main { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:6px 20px 24px; }
+  .page { display:none; animation:pop .3s cubic-bezier(.2,.9,.3,1.2); }
+  .page.active { display:block; }
+  @keyframes pop { from{opacity:0; transform:translateY(10px) scale(.98);} to{opacity:1; transform:none;} }
+  .card { background:var(--surface); border:2px solid var(--line); border-bottom-width:4px;
+    border-radius:24px; padding:20px; margin-bottom:14px; }
+  .eyebrow { font-size:11px; font-weight:900; letter-spacing:1.6px; text-transform:uppercase;
+    color:var(--sub); margin-bottom:10px; }
+  .btn { display:block; width:100%; font-family:var(--disp); font-weight:800; font-size:16px;
+    color:#fff; text-align:center; background:var(--prim); border:none; border-radius:18px;
+    padding:14px; cursor:pointer; box-shadow:0 4px 0 var(--prim-dk);
+    transition:transform .06s, box-shadow .06s; user-select:none; -webkit-user-select:none; }
+  .btn:active { transform:translateY(4px); box-shadow:0 0 0 var(--prim-dk); }
+  .btn.mint { background:var(--mint); box-shadow:0 4px 0 var(--mint-dk); }
+  .btn.mint:active { box-shadow:0 0 0 var(--mint-dk); }
+  .btn-sm { width:auto; font-size:14px; padding:10px 18px; border-radius:14px; flex-shrink:0; }
+  input, textarea, select { font-family:var(--body); font-weight:700; width:100%; font-size:15px;
+    color:var(--ink); background:#fff; border:2px solid var(--line); border-bottom-width:4px;
+    border-radius:16px; padding:12px 15px; outline:none; }
+  input:focus, textarea:focus { border-color:#D9C8F5; }
+  ::placeholder { color:#C6BCCE; font-weight:600; }
+  .stat-grid { display:flex; gap:12px; }
+  .stat-grid .card { flex:1; text-align:center; padding:16px 8px; }
+  .stat-ico { font-size:26px; }
+  .stat-num { font-family:var(--disp); font-weight:800; font-size:26px; line-height:1.2; }
+  .stat-sub { font-size:11px; font-weight:900; color:var(--sub); text-transform:uppercase; letter-spacing:.8px; }
+  .row-item { display:flex; align-items:center; gap:12px; padding:10px 2px; }
+  .row-item + .row-item { border-top:2px solid #F8F3FC; }
+  .row-item .grow { flex:1; font-size:14.5px; font-weight:800; }
+  .row-item .dim { color:var(--sub); font-size:12px; font-weight:800; }
+  .pill { font-size:11px; font-weight:900; border-radius:99px; padding:4px 10px; }
+  .pill.ok { background:var(--mint-soft); color:var(--mint-dk); }
+  .pill.no { background:var(--pink-soft); color:var(--pink-dk); }
+  .del { border:none; background:none; color:#D5C8DF; font-size:15px; cursor:pointer; padding:4px; }
+  .add-row { display:flex; gap:9px; margin-top:10px; }
+  .thought { background:var(--prim-soft); border-radius:18px 18px 18px 5px; padding:13px 16px; margin-bottom:10px; }
+  .thought p { font-size:14.5px; font-weight:700; line-height:1.65; white-space:pre-wrap; }
+  .thought .meta { font-size:11px; font-weight:900; color:var(--sub); margin-top:7px; }
+  .empty { text-align:center; color:var(--sub); font-size:13px; font-weight:800; padding:16px 0; }
+  .date-nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .date-nav button { font-family:var(--disp); font-weight:800; font-size:18px; border:2px solid var(--line);
+    border-bottom-width:4px; background:#fff; color:var(--prim-dk); border-radius:14px;
+    width:44px; height:42px; cursor:pointer; }
+  .date-nav .cur { font-family:var(--disp); font-weight:800; font-size:17px; }
+  .date-nav .cur small { display:block; text-align:center; font-size:11px; color:var(--sub); font-family:var(--body); font-weight:900; }
+  .set-row { margin-bottom:14px; }
+  .set-row label { display:block; font-size:12px; font-weight:900; color:var(--sub); margin-bottom:6px;
+    text-transform:uppercase; letter-spacing:1px; }
+  textarea.note-area { height:110px; resize:none; }
+  nav { display:flex; background:rgba(255,255,255,.94); backdrop-filter:blur(14px);
+    border-top:2px solid var(--line); padding:8px 8px calc(10px + env(safe-area-inset-bottom)); }
+  nav button { flex:1; border:none; background:none; cursor:pointer; font-family:var(--body);
+    display:flex; flex-direction:column; align-items:center; gap:3px; padding:5px 0; }
+  nav .nico { font-size:21px; width:42px; height:32px; display:flex; align-items:center; justify-content:center;
+    border-radius:12px; filter:grayscale(.9) opacity(.55); transition:.18s; }
+  nav button span { font-size:9.5px; font-weight:900; letter-spacing:.6px; text-transform:uppercase; color:var(--sub); }
+  nav button.on .nico { filter:none; background:var(--prim-soft); transform:translateY(-1px); }
+  nav button.on span { color:var(--prim-dk); }
+  #toast { position:fixed; top:14%; left:50%; transform:translateX(-50%); background:var(--ink);
+    color:#fff; font-weight:800; font-size:14px; padding:11px 22px; border-radius:99px;
+    z-index:400; display:none; }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="logo">pookie lab 🧪</div>
+    <div class="live-chip"><span class="live-dot" id="liveDot"></span><span id="liveText">DEMO</span></div>
+  </header>
+
+  <main>
+    <!-- ============ DASHBOARD ============ -->
+    <section class="page active" id="page-dash">
+      <div class="stat-grid">
+        <div class="card"><div class="stat-ico">💗</div><div class="stat-num" id="dHearts">0</div><div class="stat-sub">missed you</div></div>
+        <div class="card"><div class="stat-ico">✅</div><div class="stat-num" id="dQuests">–</div><div class="stat-sub">quests today</div></div>
+        <div class="card"><div class="stat-ico" id="dPlantIco">🌱</div><div class="stat-num" id="dPlant">–</div><div class="stat-sub" id="dPlantSub">plant</div></div>
+      </div>
+      <div class="card">
+        <div class="eyebrow">His quests today 👀</div>
+        <div id="dTaskList"><div class="empty">Loading…</div></div>
+      </div>
+      <div class="card">
+        <div class="eyebrow">His latest thoughts 💭</div>
+        <div id="dThoughts"><div class="empty">Nothing yet</div></div>
+      </div>
+    </section>
+
+    <!-- ============ NOTE & SCHEDULE ============ -->
+    <section class="page" id="page-write">
+      <div class="date-nav">
+        <button id="dPrev">‹</button>
+        <div class="cur"><span id="curDateBig">Today</span><small id="curDateSmall"></small></div>
+        <button id="dNext">›</button>
+      </div>
+      <div class="card">
+        <div class="eyebrow">Note to him for this day 💌</div>
+        <textarea class="note-area" id="noteArea" placeholder="Write him something sweet (or bossy)…"></textarea>
+        <button class="btn" id="noteSave" style="margin-top:10px;">Save note ♡</button>
+      </div>
+      <div class="card">
+        <div class="eyebrow">Your plans this day 🗓️ (he sees these)</div>
+        <div id="schedItems"><div class="empty">No plans yet</div></div>
+        <div class="add-row">
+          <input id="schedTime" placeholder="21:00" style="width:86px; flex-shrink:0;">
+          <input id="schedText" placeholder="What are you up to?" maxlength="60">
+        </div>
+        <button class="btn mint" id="schedAdd" style="margin-top:10px;">Add plan</button>
+      </div>
+    </section>
+
+    <!-- ============ QUESTS MANAGER ============ -->
+    <section class="page" id="page-quests">
+      <div class="card">
+        <div class="eyebrow">His daily quests ⚔️ (you're the quest giver)</div>
+        <div id="qList"><div class="empty">Loading…</div></div>
+        <div class="add-row">
+          <input id="qEmoji" placeholder="💪" maxlength="4" style="width:64px; flex-shrink:0; text-align:center;">
+          <input id="qText" placeholder="New quest…" maxlength="40">
+        </div>
+        <button class="btn" id="qAdd" style="margin-top:10px;">Add quest</button>
+      </div>
+      <div class="card" style="background:var(--sun-soft); border-color:#F1E0B8;">
+        <p style="font-size:13px; font-weight:800; line-height:1.6; color:#B08A2E;">
+          Quests reset every day. When he finishes all of them, he gets a little celebration —
+          and you'll see it here on the dashboard 🎉
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ SETTINGS ============ -->
+    <section class="page" id="page-set">
+      <div class="card">
+        <div class="set-row"><label>Her name (you)</label><input id="sHer"></div>
+        <div class="set-row"><label>His name</label><input id="sHim"></div>
+        <div class="set-row"><label>The day you come home ✈️</label><input id="sReturn" type="date"></div>
+        <div class="set-row"><label>Anniversary 💘</label><input id="sAnniv" type="date"></div>
+        <div class="set-row"><label>Plant was planted on 🌱</label><input id="sPlant" type="date"></div>
+        <div class="set-row"><label>His zodiac sign ♈ (for his daily horoscope)</label>
+          <select id="sSign">
+            <option value="aries">Aries ♈ (Mar 21 – Apr 19)</option>
+            <option value="taurus">Taurus ♉ (Apr 20 – May 20)</option>
+            <option value="gemini">Gemini ♊ (May 21 – Jun 20)</option>
+            <option value="cancer">Cancer ♋ (Jun 21 – Jul 22)</option>
+            <option value="leo">Leo ♌ (Jul 23 – Aug 22)</option>
+            <option value="virgo">Virgo ♍ (Aug 23 – Sep 22)</option>
+            <option value="libra">Libra ♎ (Sep 23 – Oct 22)</option>
+            <option value="scorpio">Scorpio ♏ (Oct 23 – Nov 21)</option>
+            <option value="sagittarius">Sagittarius ♐ (Nov 22 – Dec 21)</option>
+            <option value="capricorn">Capricorn ♑ (Dec 22 – Jan 19)</option>
+            <option value="aquarius">Aquarius ♒ (Jan 20 – Feb 18)</option>
+            <option value="pisces">Pisces ♓ (Feb 19 – Mar 20)</option>
+          </select>
+        </div>
+        <button class="btn" id="sSave">Save everything ♡</button>
+      </div>
+      <div class="empty">pookie lab · the control room of poomagotchi 🌱</div>
+    </section>
+  </main>
+
+  <nav>
+    <button id="tab-dash" class="on" data-p="dash"><span class="nico">📊</span><span>Watch</span></button>
+    <button id="tab-write" data-p="write"><span class="nico">💌</span><span>Write</span></button>
+    <button id="tab-quests" data-p="quests"><span class="nico">⚔️</span><span>Quests</span></button>
+    <button id="tab-set" data-p="set"><span class="nico">⚙️</span><span>Setup</span></button>
+  </nav>
+</div>
+<div id="toast"></div>
+
+<script type="module">
+/* ============================================================
+   POOKIE LAB — her control room 🧪
+   Paste the SAME Firebase config here as in index.html
+   ============================================================ */
+const FIREBASE_CONFIG = null;
+
+let fs = null, fsDoc, fsSetDoc, fsOnSnapshot;
+const localSubs = {};
+if (FIREBASE_CONFIG) {
+  const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+  const { getFirestore, doc, setDoc, onSnapshot } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+  fs = getFirestore(initializeApp(FIREBASE_CONFIG));
+  fsDoc = doc; fsSetDoc = setDoc; fsOnSnapshot = onSnapshot;
+}
+const DB = {
+  subscribe(key, cb) {
+    if (fs) { return fsOnSnapshot(fsDoc(fs, 'pookie', key), s => cb(s.exists() ? s.data().v : null)); }
+    (localSubs[key] = localSubs[key] || []).push(cb);
+    cb(DB._lget(key));
+    return () => { localSubs[key] = (localSubs[key]||[]).filter(f => f !== cb); };
+  },
+  async set(key, v) {
+    if (fs) { await fsSetDoc(fsDoc(fs, 'pookie', key), { v }); return; }
+    localStorage.setItem('pk_' + key, JSON.stringify(v));
+    (localSubs[key] || []).forEach(cb => cb(v));
+  },
+  _lget(key) { try { const s = localStorage.getItem('pk_' + key); return s === null ? null : JSON.parse(s); } catch(e){ return null; } }
+};
+$('liveDot').classList.toggle('on', !!fs);
+$('liveText').textContent = fs ? 'LIVE' : 'DEMO';
+
+function $(id) { return document.getElementById(id); }
+const pad = n => String(n).padStart(2, '0');
+function dateKey(d) { return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+function toast(t) { const el = $('toast'); el.textContent = t; el.style.display = 'block';
+  clearTimeout(el._t); el._t = setTimeout(() => el.style.display = 'none', 1700); }
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+let meta = { herName:'Pookie', hisName:'Bub', returnDate:'2026-08-25', anniversary:'2025-04-04', plantStart:'2026-07-02', sign:'aries' };
+let tasks = { list: [] }, checksToday = {}, plant = { watered:{} };
+
+/* ---------- nav ---------- */
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(x => x.classList.remove('on'));
+  $('page-' + b.dataset.p).classList.add('active'); b.classList.add('on');
+});
+
+/* ---------- DASHBOARD ---------- */
+DB.subscribe('meta', v => { if (v) meta = { ...meta, ...v }; fillSettings(); renderDashPlant(); });
+DB.subscribe('hearts', v => { $('dHearts').textContent = (v && v.count) || 0; });
+DB.subscribe('tasks', v => { tasks = v || { list: [] }; renderDashTasks(); renderQuests(); });
+DB.subscribe('check-' + dateKey(new Date()), v => { checksToday = (v && v.done) || {}; renderDashTasks(); });
+DB.subscribe('plant', v => { plant = v || { watered:{} }; renderDashPlant(); });
+DB.subscribe('thoughts', v => {
+  const list = (v && v.list) || [];
+  $('dThoughts').innerHTML = list.length ? list.slice(0, 8).map(t =>
+    `<div class="thought"><p>${esc(t.text)}</p><div class="meta">${new Date(t.ts).toLocaleString('en-US',
+      { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' })}</div></div>`).join('')
+    : '<div class="empty">He hasn’t posted yet 💭</div>';
+});
+
+function renderDashTasks() {
+  const list = tasks.list || [];
+  const done = list.filter(t => checksToday[t.id]).length;
+  $('dQuests').textContent = list.length ? `${done}/${list.length}` : '–';
+  $('dTaskList').innerHTML = list.length ? list.map(t =>
+    `<div class="row-item"><span>${t.emoji || '⭐'}</span><span class="grow">${esc(t.text)}</span>
+     <span class="pill ${checksToday[t.id] ? 'ok' : 'no'}">${checksToday[t.id] ? 'DONE ✓' : 'not yet'}</span></div>`).join('')
+    : '<div class="empty">No quests set — add some in ⚔️</div>';
+}
+function renderDashPlant() {
+  const w = plant.watered || {};
+  const today = dateKey(new Date());
+  const a = new Date(meta.plantStart + 'T00:00:00'), b = new Date(meta.returnDate + 'T00:00:00');
+  const p = Math.max(0, Math.min(1, (Date.now() - a) / (b - a)));
+  $('dPlant').textContent = Math.round(p * 100) + '%';
+  $('dPlantIco').textContent = w[today] ? '🌱' : '🥀';
+  $('dPlantSub').textContent = w[today] ? 'watered today' : 'not watered!';
+}
+
+/* ---------- WRITE (note + schedule, per date) ---------- */
+let cur = new Date(); cur.setHours(0,0,0,0);
+let unsubNote = null, unsubSched = null, schedItems = [];
+function loadDay() {
+  const k = dateKey(cur);
+  const today = dateKey(new Date());
+  $('curDateBig').textContent = k === today ? 'Today'
+    : cur.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+  $('curDateSmall').textContent = k;
+  if (unsubNote) unsubNote(); if (unsubSched) unsubSched();
+  unsubNote = DB.subscribe('note-' + k, v => { $('noteArea').value = (v && v.text) || ''; });
+  unsubSched = DB.subscribe('sched-' + k, v => {
+    schedItems = (v && v.items) || [];
+    $('schedItems').innerHTML = schedItems.length ? schedItems.map((i, idx) =>
+      `<div class="row-item"><span class="dim">${esc(i.time || '·')}</span><span class="grow">${esc(i.text)}</span>
+       <button class="del" data-i="${idx}">✕</button></div>`).join('')
+      : '<div class="empty">No plans yet</div>';
+    $('schedItems').querySelectorAll('.del').forEach(el => el.onclick = () => {
+      schedItems.splice(+el.dataset.i, 1);
+      DB.set('sched-' + k, { items: schedItems });
+    });
+  });
+}
+$('dPrev').onclick = () => { cur = new Date(cur.getTime() - 864e5); loadDay(); };
+$('dNext').onclick = () => { cur = new Date(cur.getTime() + 864e5); loadDay(); };
+$('noteSave').onclick = () => { DB.set('note-' + dateKey(cur), { text: $('noteArea').value.trim(), ts: Date.now() });
+  toast('Note saved — he’ll see it 💌'); };
+$('schedAdd').onclick = () => {
+  const t = $('schedText').value.trim(); if (!t) return;
+  schedItems = [...schedItems, { time: $('schedTime').value.trim(), text: t }];
+  schedItems.sort((a, b) => (a.time || '99').localeCompare(b.time || '99'));
+  DB.set('sched-' + dateKey(cur), { items: schedItems });
+  $('schedText').value = ''; $('schedTime').value = '';
+};
+loadDay();
+
+/* ---------- QUESTS ---------- */
+function renderQuests() {
+  const list = tasks.list || [];
+  $('qList').innerHTML = list.length ? list.map(t =>
+    `<div class="row-item"><span>${t.emoji || '⭐'}</span><span class="grow">${esc(t.text)}</span>
+     ${t.byHim ? '<span class="dim">his own</span>' : ''}<button class="del" data-q="${t.id}">✕</button></div>`).join('')
+    : '<div class="empty">No quests yet — add the first one</div>';
+  $('qList').querySelectorAll('.del').forEach(el => el.onclick = () => {
+    DB.set('tasks', { list: (tasks.list || []).filter(t => t.id !== el.dataset.q) });
+  });
+}
+$('qAdd').onclick = () => {
+  const t = $('qText').value.trim(); if (!t) return;
+  DB.set('tasks', { list: [ ...(tasks.list || []), { id:'q' + Date.now(), emoji: $('qEmoji').value.trim() || '⭐', text: t } ] });
+  $('qText').value = ''; $('qEmoji').value = ''; toast('Quest added ⚔️');
+};
+
+/* ---------- SETTINGS ---------- */
+function fillSettings() {
+  $('sHer').value = meta.herName; $('sHim').value = meta.hisName;
+  $('sReturn').value = meta.returnDate; $('sAnniv').value = meta.anniversary;
+  $('sPlant').value = meta.plantStart; $('sSign').value = meta.sign || 'aries';
+}
+$('sSave').onclick = () => {
+  DB.set('meta', {
+    herName: $('sHer').value.trim() || meta.herName,
+    hisName: $('sHim').value.trim() || meta.hisName,
+    returnDate: $('sReturn').value || meta.returnDate,
+    anniversary: $('sAnniv').value || meta.anniversary,
+    plantStart: $('sPlant').value || meta.plantStart,
+    sign: $('sSign').value,
+    hisTz:'America/New_York', herTz:'Asia/Shanghai',
+  });
+  toast('Saved ♡');
+};
+
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+</script>
+</body>
+</html>

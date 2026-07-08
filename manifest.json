@@ -1,0 +1,11 @@
+{
+  "name": "Poomagotchi",
+  "short_name": "Poomagotchi",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#FDF6EE",
+  "theme_color": "#FDF6EE",
+  "icons": [
+    { "src": "icon.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
