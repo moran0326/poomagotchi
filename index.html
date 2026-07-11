@@ -396,7 +396,14 @@
    Demo mode: data lives in localStorage.
    To go live: paste the Firebase config below (same in lab.html)
    ============================================================ */
-const FIREBASE_CONFIG = null; /* e.g. { apiKey:"...", authDomain:"...", projectId:"..." } */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAWxyFz5zHp9u0CEzVMOzBli0Dn6k_Nrk4",
+  authDomain: "poomagotchi.firebaseapp.com",
+  projectId: "poomagotchi",
+  storageBucket: "poomagotchi.firebasestorage.app",
+  messagingSenderId: "219991223537",
+  appId: "1:219991223537:web:12d4f00a3757554a87cd50"
+};
 
 /* ---------- data layer (Firebase w/ localStorage fallback) ---------- */
 let fs = null, fsDoc, fsSetDoc, fsOnSnapshot;
