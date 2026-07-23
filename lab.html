@@ -220,10 +220,12 @@ const FIREBASE_CONFIG = {
 let fs = null, fsDoc, fsSetDoc, fsOnSnapshot;
 const localSubs = {};
 if (FIREBASE_CONFIG) {
-  const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
-  const { getFirestore, doc, setDoc, onSnapshot } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
-  fs = getFirestore(initializeApp(FIREBASE_CONFIG));
-  fsDoc = doc; fsSetDoc = setDoc; fsOnSnapshot = onSnapshot;
+  try {
+    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+    const { getFirestore, doc, setDoc, onSnapshot } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+    fs = getFirestore(initializeApp(FIREBASE_CONFIG));
+    fsDoc = doc; fsSetDoc = setDoc; fsOnSnapshot = onSnapshot;
+  } catch(e) { console.warn('firebase offline, using local mode', e); }
 }
 const DB = {
   subscribe(key, cb) {

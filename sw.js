@@ -1,4 +1,4 @@
-const CACHE = 'pooma-v1';
+const CACHE = 'pooma-v2';
 const SHELL = ['./', 'index.html', 'lab.html', 'manifest.json', 'manifest-lab.json', 'icon.png', 'icon-lab.png'];
 
 self.addEventListener('install', e => {

@@ -8,9 +8,9 @@
 <link rel="apple-touch-icon" href="icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Poomagotchi">
-<meta name="theme-color" content="#FDF6EE">
+<meta name="theme-color" content="#AEDCF5">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet">
@@ -28,28 +28,15 @@
   html,body { height:100%; }
   body { font-family:var(--body); font-weight:700; background:var(--bg); color:var(--ink); overflow:hidden; }
   #app { height:100dvh; display:flex; flex-direction:column; max-width:520px; margin:0 auto; }
-
-  /* ===== header ===== */
-  header { display:flex; align-items:center; justify-content:space-between;
-    padding:14px 22px 6px; padding-top:calc(12px + env(safe-area-inset-top)); }
-  .logo { font-family:var(--disp); font-weight:800; font-size:21px; color:var(--pink-dk); letter-spacing:.3px; }
-  .logo span { font-size:17px; }
-  .streak-chip { display:flex; align-items:center; gap:5px; background:var(--sun-soft);
-    border:2px solid #F5DFAE; border-radius:99px; padding:5px 12px;
-    font-size:13px; font-weight:900; color:#C98A1B; }
-
-  /* ===== layout ===== */
-  main { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:6px 20px 24px; }
+  main { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; }
   .page { display:none; animation:pop .3s cubic-bezier(.2,.9,.3,1.2); }
   .page.active { display:block; }
+  .pad { padding:14px 20px 24px; }
   @keyframes pop { from{opacity:0; transform:translateY(10px) scale(.98);} to{opacity:1; transform:none;} }
-
   .card { background:var(--surface); border:2px solid var(--line); border-bottom-width:4px;
     border-radius:24px; padding:20px; margin-bottom:14px; }
   .eyebrow { font-size:11px; font-weight:900; letter-spacing:1.6px; text-transform:uppercase;
     color:var(--sub); margin-bottom:10px; }
-
-  /* ===== duo-style buttons ===== */
   .btn { display:block; width:100%; font-family:var(--disp); font-weight:800; font-size:17px;
     color:#fff; text-align:center; background:var(--pink); border:none; border-radius:18px;
     padding:15px; cursor:pointer; box-shadow:0 4px 0 var(--pink-dk); letter-spacing:.4px;
@@ -57,61 +44,102 @@
   .btn:active { transform:translateY(4px); box-shadow:0 0 0 var(--pink-dk); }
   .btn.mint { background:var(--mint); box-shadow:0 4px 0 var(--mint-dk); }
   .btn.mint:active { box-shadow:0 0 0 var(--mint-dk); }
-  .btn.sky { background:var(--sky); box-shadow:0 4px 0 var(--sky-dk); }
-  .btn.sky:active { box-shadow:0 0 0 var(--sky-dk); }
-  .btn:disabled { filter:grayscale(.5) opacity(.7); }
+  .btn.lilac { background:var(--lilac); box-shadow:0 4px 0 var(--lilac-dk); }
+  .btn.lilac:active { box-shadow:0 0 0 var(--lilac-dk); }
   .btn-sm { width:auto; font-size:14px; padding:10px 18px; border-radius:14px; flex-shrink:0; }
-
   input, textarea { font-family:var(--body); font-weight:700; width:100%; font-size:15px;
     color:var(--ink); background:#fff; border:2px solid var(--line); border-bottom-width:4px;
     border-radius:16px; padding:12px 15px; outline:none; }
   input:focus, textarea:focus { border-color:#F5C7D4; }
   ::placeholder { color:#C9BBB2; font-weight:600; }
+  .add-row { display:flex; gap:9px; }
+  .empty { text-align:center; color:var(--sub); font-size:13.5px; font-weight:800; padding:18px 0; }
 
-  /* ===== HOME ===== */
-  .greeting { font-family:var(--disp); font-weight:700; font-size:15px; color:var(--sub);
-    text-align:center; margin:2px 0 12px; }
-  .hero { background:linear-gradient(160deg,#FFE9F0 0%,#FFF7EF 55%,#FFF1DE 100%);
-    border-color:#F7D9E0; text-align:center; position:relative; overflow:hidden; }
-  .hero .eyebrow { color:var(--pink-dk); }
-  .big-days { font-family:var(--disp); font-weight:800; font-size:76px; line-height:1;
-    color:var(--pink-dk); text-shadow:0 3px 0 #F7CBD7; }
-  .big-days small { font-size:24px; font-weight:700; margin-left:2px; }
-  .hms { display:flex; justify-content:center; gap:8px; margin-top:14px; }
-  .hms div { background:rgba(255,255,255,.8); border:2px solid #F7D9E0; border-radius:14px;
-    width:66px; padding:7px 0 5px; }
-  .hms b { font-family:var(--disp); display:block; font-size:22px; color:var(--pink-dk); line-height:1.1; }
-  .hms span { font-size:10px; font-weight:900; letter-spacing:1px; color:#C99AA9; text-transform:uppercase; }
-  .hero .date-line { margin-top:12px; font-size:12.5px; font-weight:800; color:#C99AA9; }
-  .float-heart { position:absolute; opacity:.5; animation:drift 5s ease-in-out infinite alternate; }
-  @keyframes drift { from{transform:translateY(0) rotate(-10deg);} to{transform:translateY(-9px) rotate(10deg);} }
+  /* ================= SCENE ================= */
+  #scene { position:relative; width:100%; height:60dvh; min-height:380px; max-height:560px;
+    overflow:hidden; border-radius:0 0 34px 34px; }
+  #scene svg { width:100%; height:100%; display:block; }
+  #sky, #horizon { transition:fill 3s ease; }
+  #shade { transition:opacity 3s ease; pointer-events:none; }
+  #stars { transition:opacity 3s ease; }
+  .cloud { animation:cloudDrift 26s linear infinite; }
+  .cloud.c2 { animation-duration:38s; animation-delay:-14s; }
+  .cloud.c3 { animation-duration:50s; animation-delay:-30s; }
+  @keyframes cloudDrift { from{transform:translateX(-140px);} to{transform:translateX(430px);} }
+  #poomaG { cursor:pointer; }
+  #poomaBody { transform-origin:50% 100%; transform-box:fill-box; animation:breath 3.6s ease-in-out infinite; }
+  @keyframes breath { 0%,100%{transform:scale(1,1);} 50%{transform:scale(1.02,.98);} }
+  #poomaG.wilt #poomaBody { animation:none; }
+  #poomaG.wilt #budG { transform:rotate(16deg); }
+  #budG { transform-origin:50% 90%; transform-box:fill-box; transition:transform .8s ease; }
+  #poomaG.bounce #poomaBody { animation:pbounce .55s cubic-bezier(.3,1.6,.5,1); }
+  @keyframes pbounce { 0%{transform:scale(1,1);} 30%{transform:scale(1.12,.85);} 60%{transform:scale(.94,1.1);} 100%{transform:scale(1,1);} }
+  .eye { transform-origin:center; transform-box:fill-box; transition:transform .1s; }
+  #poomaG.blink .eye { transform:scaleY(.08); }
+  .rain { animation:rainfall 1s linear infinite; }
+  @keyframes rainfall { from{transform:translateY(-40px);} to{transform:translateY(520px);} }
+  .snow { animation:snowfall 5s linear infinite; }
+  @keyframes snowfall { from{transform:translateY(-20px);} to{transform:translateY(530px);} }
+  #mailboxG { cursor:pointer; }
+  #mailboxG.hasmail { animation:mailWiggle 2.4s ease-in-out infinite; transform-origin:50% 100%; transform-box:fill-box; }
+  @keyframes mailWiggle { 0%,86%,100%{transform:rotate(0);} 90%{transform:rotate(-5deg);} 94%{transform:rotate(4deg);} 98%{transform:rotate(-2deg);} }
+  .scene-ui { position:absolute; z-index:5; }
+  #greetBubble { top:14px; left:16px; background:rgba(255,255,255,.85); backdrop-filter:blur(6px);
+    border-radius:16px 16px 16px 5px; padding:8px 14px; font-size:12.5px; font-weight:800;
+    max-width:220px; color:#4B3F3A; }
+  #brandTag { top:16px; right:16px; font-family:var(--disp); font-weight:800; font-size:14px;
+    color:rgba(255,255,255,.92); text-shadow:0 1px 3px rgba(0,0,0,.18); }
+  #herSky { bottom:14px; left:16px; background:rgba(255,255,255,.85); backdrop-filter:blur(6px);
+    border-radius:99px; padding:7px 13px; font-size:11.5px; font-weight:900; color:#4B3F3A; }
+  #waterBtn2 { bottom:14px; right:16px; border:none; font-family:var(--disp); font-weight:800;
+    font-size:14px; color:#fff; background:var(--sky); box-shadow:0 4px 0 var(--sky-dk);
+    border-radius:16px; padding:11px 18px; cursor:pointer; transition:transform .06s, box-shadow .06s; }
+  #waterBtn2:active { transform:translateY(4px); box-shadow:0 0 0 var(--sky-dk); }
+  #waterBtn2:disabled { filter:grayscale(.4) opacity(.85); }
+  #poomaSay { position:absolute; z-index:6; background:#fff; border-radius:14px; padding:7px 12px;
+    font-size:12px; font-weight:800; color:var(--ink); opacity:0; transition:opacity .3s;
+    pointer-events:none; transform:translateX(-50%); }
+  .heart-fly { position:fixed; font-size:26px; pointer-events:none; z-index:99;
+    animation:fly 2s ease-out forwards; }
+  @keyframes fly { 0%{transform:translateY(0) scale(.5); opacity:0;} 12%{opacity:1;}
+    100%{transform:translateY(-45vh) scale(1.35) rotate(14deg); opacity:0;} }
+  .drop2 { position:absolute; z-index:6; font-size:18px; pointer-events:none; animation:dropfall2 .9s ease-in forwards; }
+  @keyframes dropfall2 { from{transform:translateY(-60px); opacity:1;} to{transform:translateY(10px); opacity:0;} }
 
+  /* home below-scene */
+  .ritual-row { display:flex; gap:10px; margin:16px 0 14px; }
+  .ritual-chip { flex:1; display:flex; align-items:center; gap:9px; background:var(--surface);
+    border:2px solid var(--line); border-bottom-width:4px; border-radius:18px; padding:11px 14px;
+    font-size:12.5px; font-weight:800; cursor:pointer; }
+  .ritual-chip .ric { font-size:20px; }
+  .ritual-chip.done { background:var(--mint-soft); border-color:#CBE9DB; color:var(--mint-dk); }
+  .cd-line { text-align:center; font-size:13px; font-weight:800; color:var(--sub); margin-bottom:14px; }
+  .cd-line b { font-family:var(--disp); color:var(--pink-dk); font-size:15px; }
   .duo-row { display:flex; gap:12px; }
-  .duo-row .card { flex:1; margin-bottom:14px; }
-  .stat-num { font-family:var(--disp); font-weight:800; font-size:30px; color:var(--ink); line-height:1.15; }
+  .duo-row .card { flex:1; }
+  .stat-num { font-family:var(--disp); font-weight:800; font-size:30px; line-height:1.15; }
   .stat-sub { font-size:12px; font-weight:800; color:var(--sub); }
-
   .clock-row { display:flex; align-items:center; }
   .clock { flex:1; text-align:center; }
-  .clock .who { font-size:12px; font-weight:900; color:var(--sub); margin-bottom:3px; }
-  .clock .t { font-family:var(--disp); font-weight:800; font-size:30px; }
-  .clock .d { font-size:11.5px; font-weight:800; color:var(--sub); margin-top:1px; }
-  .clock-heart { font-size:20px; padding:0 8px; }
+  .clock .who { font-size:11.5px; font-weight:900; color:var(--sub); margin-bottom:3px; }
+  .clock .t { font-family:var(--disp); font-weight:800; font-size:28px; }
+  .clock .d { font-size:11px; font-weight:800; color:var(--sub); }
 
-  #missCounter { text-align:center; font-size:13px; font-weight:800; color:var(--sub); margin-top:10px; }
-  .heart-fly { position:fixed; bottom:110px; font-size:26px; pointer-events:none; z-index:99;
-    animation:fly 2.1s ease-out forwards; }
-  @keyframes fly { 0%{transform:translateY(0) scale(.5); opacity:0;} 12%{opacity:1;}
-    100%{transform:translateY(-58vh) scale(1.35) rotate(14deg); opacity:0;} }
-
-  /* ===== TODAY ===== */
+  /* today */
   .today-date { font-family:var(--disp); font-weight:800; font-size:24px; margin:2px 2px 14px; }
   .today-date span { color:var(--pink); }
   .note-card { background:linear-gradient(180deg,#FFFDF6,#FFF6E8); border-color:#F2DFC2; position:relative; }
   .note-card .tape { position:absolute; top:-11px; left:50%; transform:translateX(-50%) rotate(-2deg);
     width:86px; height:22px; background:rgba(255,122,158,.30); border-radius:4px; }
-  .note-text { font-size:16.5px; line-height:1.75; font-weight:700; }
+  .note-sealed { text-align:center; padding:26px 0; cursor:pointer; }
+  .note-sealed .env { font-size:44px; display:block; animation:mailWiggle 3s ease-in-out infinite; }
+  .note-sealed p { font-size:13.5px; font-weight:800; color:#C99A5B; margin-top:8px; }
+  .note-text { font-size:16.5px; line-height:1.75; font-weight:700; white-space:pre-wrap; }
   .note-sign { text-align:right; font-family:var(--disp); color:var(--pink-dk); font-size:14px; margin-top:12px; }
+  .reply-zone { margin-top:14px; border-top:2px dashed #EBD9BE; padding-top:14px; }
+  .reply-zone textarea { height:64px; resize:none; margin-bottom:9px; background:#FFFDF6; }
+  .reply-sent { background:#FDF1E3; border-radius:14px; padding:12px 15px; font-size:14px; line-height:1.6; }
+  .reply-sent .rmeta { font-size:11px; color:#C99A5B; font-weight:900; margin-bottom:4px; }
   .sched-item { display:flex; gap:12px; padding:9px 0; align-items:baseline; }
   .sched-item + .sched-item { border-top:2px dashed #F5EADF; }
   .sched-time { font-family:var(--disp); font-weight:800; font-size:14px; color:var(--sky-dk);
@@ -122,47 +150,13 @@
     background:var(--lilac-soft); border-radius:99px; padding:4px 13px; }
   .horo-src { font-size:10.5px; font-weight:900; letter-spacing:.8px; text-transform:uppercase; color:var(--sub); }
   .horo-text { font-size:14.5px; font-weight:700; line-height:1.7; }
-  .lucky-row { display:flex; gap:10px; margin-top:10px; }
+  .lucky-row { display:flex; gap:10px; margin-top:12px; }
   .lucky { flex:1; display:flex; align-items:center; gap:9px; background:#FAF3EA;
     border-radius:16px; padding:10px 13px; font-size:13px; font-weight:800; }
   .lucky .swatch { width:22px; height:22px; border-radius:8px; border:2px solid rgba(0,0,0,.08); flex-shrink:0; }
   .lucky .num { font-family:var(--disp); font-size:20px; color:var(--lilac-dk); }
-  .wx-row { display:flex; gap:12px; }
-  .wx { flex:1; text-align:center; border-radius:18px; padding:14px 8px; }
-  .wx.us { background:var(--sky-soft); } .wx.cn { background:var(--sun-soft); }
-  .wx .city { font-size:12px; font-weight:900; color:var(--sub); }
-  .wx .ico { font-size:32px; margin:4px 0 2px; display:block; }
-  .wx .temp { font-family:var(--disp); font-weight:800; font-size:22px; }
-  .wx .range { font-size:11.5px; font-weight:800; color:var(--sub); }
 
-  /* ===== PLANT ===== */
-  .plant-stage-name { font-family:var(--disp); font-weight:800; font-size:22px; text-align:center; }
-  .plant-mood { text-align:center; font-size:13.5px; font-weight:800; color:var(--sub); margin-top:2px; }
-  .plant-scene { position:relative; height:250px; margin:10px 0 4px; border-radius:20px;
-    background:linear-gradient(180deg,#DFF3FD 0%,#EFFAF3 62%, #D8EFC9 62%, #CBE7B8 100%);
-    overflow:hidden; border:2px solid #D8E9DC; }
-  .plant-sun { position:absolute; top:14px; right:18px; font-size:34px; animation:drift 4s ease-in-out infinite alternate; }
-  .plant-cloud { position:absolute; top:24px; left:16px; font-size:26px; opacity:.8; animation:drift 6s ease-in-out infinite alternate-reverse; }
-  #plantEmoji { position:absolute; bottom:58px; left:50%; transform:translateX(-50%);
-    font-size:64px; transition:font-size .6s; line-height:1; }
-  #plantEmoji.wilt { filter:grayscale(.75); transform:translateX(-50%) rotate(14deg); }
-  .plant-pot { position:absolute; bottom:14px; left:50%; transform:translateX(-50%); font-size:44px; }
-  .drop { position:absolute; font-size:20px; animation:dropfall 1s ease-in forwards; z-index:5; }
-  @keyframes dropfall { from{transform:translateY(-70px); opacity:1;} to{transform:translateY(0); opacity:0;} }
-  .progress-wrap { margin:14px 0 6px; }
-  .progress-track { height:16px; background:#F3E9DD; border-radius:99px; overflow:hidden; }
-  .progress-fill { height:100%; background:linear-gradient(90deg,var(--mint),#8FE0BC); border-radius:99px;
-    transition:width .8s cubic-bezier(.2,.9,.3,1.1); min-width:16px; }
-  .progress-caption { display:flex; justify-content:space-between; font-size:11.5px; font-weight:900;
-    color:var(--sub); margin-top:6px; }
-  .water-week { display:flex; justify-content:space-between; margin:12px 2px 16px; }
-  .wday { text-align:center; font-size:10.5px; font-weight:900; color:var(--sub); }
-  .wday .dot { width:30px; height:30px; border-radius:50%; background:#F3E9DD; margin:0 auto 4px;
-    display:flex; align-items:center; justify-content:center; font-size:15px; }
-  .wday .dot.yes { background:var(--sky-soft); }
-  .wday.today .dot { outline:2.5px solid var(--sky); outline-offset:2px; }
-
-  /* ===== TODOS ===== */
+  /* quests */
   .task { display:flex; align-items:center; gap:13px; padding:13px 2px; }
   .task + .task { border-top:2px solid #FAF1E7; }
   .task-check { width:30px; height:30px; border-radius:11px; border:2.5px solid #EBD9CB; flex-shrink:0;
@@ -174,31 +168,45 @@
   .task.done .task-text { color:var(--sub); text-decoration:line-through; }
   .task-del { border:none; background:none; color:#DCC9BC; font-size:15px; cursor:pointer; padding:4px; }
   .task-progress { font-family:var(--disp); font-weight:800; font-size:15px; color:var(--mint-dk); }
-  .add-row { display:flex; gap:9px; margin-top:2px; }
-
-  /* praise overlay */
   #praise { position:fixed; inset:0; background:rgba(255,240,245,.96); z-index:300; display:none;
     flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:30px; }
-  #praise .pj { font-size:78px; animation:bounce .7s ease infinite alternate; }
-  @keyframes bounce { from{transform:translateY(0) scale(1);} to{transform:translateY(-16px) scale(1.06);} }
+  #praise .pj { font-size:78px; animation:bigbounce .7s ease infinite alternate; }
+  @keyframes bigbounce { from{transform:translateY(0) scale(1);} to{transform:translateY(-16px) scale(1.06);} }
   #praise h2 { font-family:var(--disp); font-weight:800; font-size:30px; color:var(--pink-dk); margin:14px 0 8px; }
-  #praise p { font-size:16px; font-weight:800; color:var(--ink); max-width:300px; line-height:1.6; }
+  #praise p { font-size:16px; font-weight:800; max-width:300px; line-height:1.6; }
   #praise .btn { max-width:240px; margin-top:26px; }
   .confetti { position:fixed; top:-20px; z-index:301; font-size:20px; animation:confall 2.6s linear forwards; }
   @keyframes confall { to{ transform:translateY(110vh) rotate(720deg);} }
 
-  /* ===== THOUGHTS ===== */
-  .thought { background:var(--surface); border:2px solid var(--line); border-bottom-width:4px;
+  /* us */
+  .post { background:var(--surface); border:2px solid var(--line); border-bottom-width:4px;
     border-radius:20px; padding:16px 18px; margin-bottom:12px; }
-  .thought p { font-size:15px; font-weight:700; line-height:1.7; white-space:pre-wrap; }
-  .thought .meta { display:flex; justify-content:space-between; margin-top:9px;
+  .post p.body { font-size:15px; font-weight:700; line-height:1.7; white-space:pre-wrap; }
+  .post .meta { display:flex; justify-content:space-between; margin-top:9px; align-items:center;
     font-size:11.5px; font-weight:900; color:var(--sub); }
-  .thought .meta button { border:none; background:none; color:#DCC9BC; font-weight:900;
-    font-size:11.5px; cursor:pointer; font-family:var(--body); }
+  .post .meta button { border:none; background:none; color:var(--sub); font-weight:900;
+    font-size:11.5px; cursor:pointer; font-family:var(--body); padding:2px 6px; }
+  .post .meta button.rp { color:var(--lilac-dk); }
+  .replies { margin-top:10px; border-left:3px solid #F1EAFD; padding-left:12px; }
+  .reply-item { margin-bottom:8px; }
+  .reply-item .rwho { font-size:11px; font-weight:900; }
+  .reply-item .rwho.her { color:var(--pink-dk); }
+  .reply-item .rwho.him { color:var(--sky-dk); }
+  .reply-item p { font-size:13.5px; font-weight:700; line-height:1.55; white-space:pre-wrap; }
+  .reply-box { display:flex; gap:8px; margin-top:10px; }
+  .reply-box input { padding:9px 13px; font-size:13.5px; border-radius:13px; }
   .compose textarea { resize:none; height:76px; margin-bottom:10px; }
-  .empty { text-align:center; color:var(--sub); font-size:13.5px; font-weight:800; padding:18px 0; }
+  .anni-item { display:flex; align-items:center; gap:14px; padding:13px 2px; }
+  .anni-item + .anni-item { border-top:2px solid #FAF1E7; }
+  .anni-emoji { font-size:24px; }
+  .anni-info { flex:1; }
+  .anni-name { font-size:15px; font-weight:800; }
+  .anni-date { font-size:12px; color:var(--sub); margin-top:2px; font-weight:700; }
+  .anni-count { text-align:right; }
+  .anni-count b { font-family:var(--disp); color:var(--pink-dk); font-size:20px; }
+  .anni-count span { font-size:11px; color:var(--sub); display:block; font-weight:800; }
 
-  /* ===== tab bar ===== */
+  /* nav */
   nav { display:flex; background:rgba(255,255,255,.94); backdrop-filter:blur(14px);
     border-top:2px solid var(--line); padding:8px 8px calc(10px + env(safe-area-inset-bottom)); }
   nav button { flex:1; border:none; background:none; cursor:pointer; font-family:var(--body);
@@ -208,193 +216,206 @@
   nav button span { font-size:9.5px; font-weight:900; letter-spacing:.6px; text-transform:uppercase; color:var(--sub); }
   nav button.on .nico { filter:none; background:var(--pink-soft); transform:translateY(-1px); }
   nav button.on span { color:var(--pink-dk); }
-
-  #toast { position:fixed; top:14%; left:50%; transform:translateX(-50%); background:var(--ink);
+  #toast { position:fixed; top:12%; left:50%; transform:translateX(-50%); background:var(--ink);
     color:#fff; font-weight:800; font-size:14px; padding:11px 22px; border-radius:99px;
-    z-index:400; display:none; box-shadow:0 6px 18px rgba(75,63,58,.3); }
+    z-index:400; display:none; }
 </style>
 </head>
 <body>
 <div id="app">
-  <header>
-    <div class="logo">poomagotchi <span>🌱</span></div>
-    <div class="streak-chip">🔥 <span id="streakNum">0</span></div>
-  </header>
-
   <main id="main">
+
     <!-- ================= HOME ================= -->
     <section class="page active" id="page-home">
-      <div class="greeting" id="greeting"></div>
-      <div class="card hero">
-        <span class="float-heart" style="top:16px;left:18px;font-size:19px;">🩷</span>
-        <span class="float-heart" style="top:44px;right:22px;font-size:14px;animation-delay:1.2s;">💗</span>
-        <span class="float-heart" style="bottom:18px;left:30px;font-size:15px;animation-delay:2.2s;">✨</span>
-        <div class="eyebrow" id="cdLabel">I'll be home in</div>
-        <div class="big-days"><span id="cdD">–</span><small>days</small></div>
-        <div class="hms">
-          <div><b id="cdH">–</b><span>hrs</span></div>
-          <div><b id="cdM">–</b><span>min</span></div>
-          <div><b id="cdS">–</b><span>sec</span></div>
-        </div>
-        <div class="date-line" id="cdDate"></div>
+      <div id="scene">
+        <svg viewBox="0 0 390 520" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+          <rect id="sky" x="0" y="0" width="390" height="520" fill="#AEDCF5"/>
+          <ellipse id="horizon" cx="195" cy="400" rx="360" ry="150" fill="#DFF2FD"/>
+          <g id="stars" opacity="0"></g>
+          <circle id="sun" cx="310" cy="90" r="34" fill="#FFD976"/>
+          <g id="moonG" opacity="0">
+            <circle cx="310" cy="90" r="26" fill="#FFF3D6"/>
+            <circle cx="302" cy="84" r="5" fill="#F0E0BC"/>
+            <circle cx="318" cy="96" r="3.5" fill="#F0E0BC"/>
+            <circle cx="308" cy="100" r="2.5" fill="#F0E0BC"/>
+          </g>
+          <g class="cloud"><ellipse cx="70" cy="80" rx="34" ry="13" fill="#FFFFFF" opacity=".95"/><ellipse cx="94" cy="72" rx="22" ry="10" fill="#FFFFFF" opacity=".95"/></g>
+          <g class="cloud c2"><ellipse cx="40" cy="140" rx="28" ry="11" fill="#FFFFFF" opacity=".8"/><ellipse cx="60" cy="133" rx="18" ry="8" fill="#FFFFFF" opacity=".8"/></g>
+          <g class="cloud c3" id="cloudExtra" opacity="0"><ellipse cx="150" cy="55" rx="38" ry="14" fill="#FFFFFF" opacity=".9"/><ellipse cx="180" cy="47" rx="24" ry="10" fill="#FFFFFF" opacity=".9"/></g>
+          <ellipse cx="195" cy="470" rx="300" ry="120" fill="#BCE3A8"/>
+          <ellipse cx="360" cy="490" rx="200" ry="95" fill="#A9D791"/>
+          <ellipse cx="20" cy="500" rx="180" ry="80" fill="#A9D791"/>
+          <g id="signG">
+            <rect x="52" y="330" width="9" height="66" rx="4" fill="#B98A5E"/>
+            <rect x="18" y="296" width="78" height="42" rx="8" fill="#DFA96F"/>
+            <rect x="22" y="300" width="70" height="34" rx="6" fill="#EBBB82"/>
+            <text id="signDays" x="57" y="322" font-size="19" font-weight="800" fill="#7A5230" text-anchor="middle" font-family="'Baloo 2',cursive">–</text>
+            <text x="57" y="331" font-size="6.5" font-weight="800" fill="#A2794E" text-anchor="middle" font-family="Nunito,sans-serif" letter-spacing="1">DAYS TO GO</text>
+          </g>
+          <g id="mailboxG">
+            <rect x="318" y="352" width="7" height="48" rx="3" fill="#B98A5E"/>
+            <rect x="298" y="326" width="48" height="30" rx="10" fill="#E8556D"/>
+            <rect x="298" y="326" width="48" height="9" rx="4.5" fill="#D14158"/>
+            <circle id="mailDot" cx="342" cy="324" r="8" fill="#FFC94D" opacity="0"/>
+            <text id="mailNum" x="342" y="327.5" font-size="9" font-weight="800" fill="#7A5200" text-anchor="middle" font-family="Nunito,sans-serif" opacity="0">1</text>
+          </g>
+          <g id="poomaG">
+            <g id="poomaBody">
+              <g id="stageWrap" transform="translate(195,436)">
+                <path id="pot" d="M -34 -34 L 34 -34 L 26 6 L -26 6 Z" fill="#F5A25D"/>
+                <ellipse cx="0" cy="-34" rx="37" ry="8" fill="#E8874A"/>
+                <g id="plantG">
+                  <rect id="stem" x="-4" y="-88" width="8" height="52" rx="4" fill="#57C79B"/>
+                  <ellipse id="leafL" cx="-18" cy="-66" rx="17" ry="9" fill="#7BD8B0"/>
+                  <ellipse id="leafR" cx="18" cy="-74" rx="17" ry="9" fill="#7BD8B0"/>
+                  <g id="budG">
+                    <path id="budHeart" d="M 0 -86 C -26 -112 0 -140 0 -122 C 0 -140 26 -112 0 -86 Z" fill="#FF7A9E"/>
+                    <ellipse class="eye" cx="-7" cy="-116" rx="2.8" ry="3.6" fill="#4B3F3A"/>
+                    <ellipse class="eye" cx="7" cy="-116" rx="2.8" ry="3.6" fill="#4B3F3A"/>
+                    <path id="mouth" d="M -5 -109 Q 0 -104 5 -109" stroke="#4B3F3A" stroke-width="2" fill="none" stroke-linecap="round"/>
+                    <circle cx="-13" cy="-110" r="3" fill="#FFB3C7"/>
+                    <circle cx="13" cy="-110" r="3" fill="#FFB3C7"/>
+                  </g>
+                </g>
+              </g>
+            </g>
+          </g>
+          <g id="weatherFx"></g>
+          <rect id="shade" x="0" y="0" width="390" height="520" fill="#1B2540" opacity="0"/>
+        </svg>
+        <div class="scene-ui" id="greetBubble">Hi bub ☀️</div>
+        <div class="scene-ui" id="brandTag">poomagotchi</div>
+        <div class="scene-ui" id="herSky">🇨🇳 her sky · –</div>
+        <button class="scene-ui" id="waterBtn2">💧 Water</button>
+        <div id="poomaSay"></div>
       </div>
 
-      <div class="duo-row">
-        <div class="card">
-          <div class="eyebrow">Together for</div>
-          <div class="stat-num" id="togetherDays">–</div>
-          <div class="stat-sub">days &amp; counting 💞</div>
+      <div class="pad" style="padding-top:0;">
+        <div class="ritual-row">
+          <div class="ritual-chip" id="chipWater"><span class="ric">💧</span><span id="chipWaterTxt">Water Pooma</span></div>
+          <div class="ritual-chip" id="chipNote"><span class="ric">💌</span><span id="chipNoteTxt">Open today's note</span></div>
         </div>
-        <div class="card">
-          <div class="eyebrow">Hearts sent</div>
-          <div class="stat-num" id="heartTotal">0</div>
-          <div class="stat-sub">I feel every single one</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="eyebrow">Your two time zones</div>
-        <div class="clock-row">
-          <div class="clock">
-            <div class="who" id="hisLabel">YOU · SHARON</div>
-            <div class="t" id="clockHis">–:–</div>
-            <div class="d" id="clockHisD"></div>
+        <div class="cd-line" id="cdLine"></div>
+        <div class="duo-row">
+          <div class="card">
+            <div class="eyebrow">Together for</div>
+            <div class="stat-num" id="togetherDays">–</div>
+            <div class="stat-sub">days &amp; counting 💞</div>
           </div>
-          <div class="clock-heart">💌</div>
-          <div class="clock">
-            <div class="who" id="herLabel">ME · BEIJING</div>
-            <div class="t" id="clockHer">–:–</div>
-            <div class="d" id="clockHerD"></div>
+          <div class="card">
+            <div class="eyebrow">Times you missed me</div>
+            <div class="stat-num" id="heartTotal">0</div>
+            <div class="stat-sub">I feel every single one</div>
           </div>
         </div>
+        <div class="card">
+          <div class="eyebrow">Your two time zones</div>
+          <div class="clock-row">
+            <div class="clock">
+              <div class="who">YOU · SHARON</div>
+              <div class="t" id="clockHis">–:–</div>
+              <div class="d" id="clockHisD"></div>
+            </div>
+            <div style="font-size:18px; padding:0 8px;">💌</div>
+            <div class="clock">
+              <div class="who">ME · BEIJING</div>
+              <div class="t" id="clockHer">–:–</div>
+              <div class="d" id="clockHerD"></div>
+            </div>
+          </div>
+        </div>
+        <div class="empty" style="padding:6px 0 0;">tap Pooma when you miss me 💗</div>
       </div>
-
-      <button class="btn" id="missBtn">Missing me? Tap here 💗</button>
-      <div id="missCounter"></div>
     </section>
 
     <!-- ================= TODAY ================= -->
     <section class="page" id="page-today">
-      <div class="today-date" id="todayDate"></div>
-
-      <div class="card note-card">
-        <div class="tape"></div>
-        <div class="eyebrow" style="color:#C99A5B;">Today's note from me 💌</div>
-        <div class="note-text" id="noteText">I haven't written today's note yet… check back soon 🕊️</div>
-        <div class="note-sign" id="noteSign"></div>
-      </div>
-
-      <div class="card">
-        <div class="eyebrow">What I'm up to today 🗓️</div>
-        <div id="schedList"><div class="empty">No plans posted yet today ✨</div></div>
-      </div>
-
-      <div class="card">
-        <div class="eyebrow">Daily horoscope 🔮</div>
-        <div class="horo-head">
-          <span class="horo-sign" id="hSign">✨</span>
-          <span class="horo-src">real stars, real data</span>
+      <div class="pad">
+        <div class="today-date" id="todayDate"></div>
+        <div class="card note-card">
+          <div class="tape"></div>
+          <div class="eyebrow" style="color:#C99A5B;">Today's note from me 💌</div>
+          <div id="noteZone"></div>
         </div>
-        <p class="horo-text" id="hText">Reading the stars…</p>
-        <div class="lucky-row">
-          <div class="lucky"><span class="swatch" id="fSwatch"></span><span id="fColor"></span></div>
-          <div class="lucky">Lucky no. <span class="num" id="fNum"></span></div>
+        <div class="card">
+          <div class="eyebrow">What I'm up to today 🗓️</div>
+          <div id="schedList"><div class="empty">No plans posted yet today ✨</div></div>
         </div>
-      </div>
-
-      <div class="card">
-        <div class="eyebrow">Weather where you both are ⛅</div>
-        <div class="wx-row">
-          <div class="wx us">
-            <div class="city">SHARON, MA</div>
-            <span class="ico" id="wxUsIco">–</span>
-            <div class="temp" id="wxUsTemp">–</div>
-            <div class="range" id="wxUsRange"></div>
+        <div class="card">
+          <div class="eyebrow">Daily horoscope 🔮</div>
+          <div class="horo-head">
+            <span class="horo-sign" id="hSign">✨</span>
+            <span class="horo-src">real stars, real data</span>
           </div>
-          <div class="wx cn">
-            <div class="city">BEIJING</div>
-            <span class="ico" id="wxCnIco">–</span>
-            <div class="temp" id="wxCnTemp">–</div>
-            <div class="range" id="wxCnRange"></div>
+          <p class="horo-text" id="hText">Reading the stars…</p>
+          <div class="lucky-row">
+            <div class="lucky"><span class="swatch" id="fSwatch"></span><span id="fColor"></span></div>
+            <div class="lucky">Lucky no. <span class="num" id="fNum"></span></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ================= PLANT ================= -->
-    <section class="page" id="page-plant">
-      <div class="card" style="padding-bottom:16px;">
-        <div class="plant-stage-name" id="plantStage">Sprout</div>
-        <div class="plant-mood" id="plantMood"></div>
-        <div class="plant-scene" id="plantScene">
-          <span class="plant-sun">☀️</span>
-          <span class="plant-cloud">☁️</span>
-          <span id="plantEmoji">🌱</span>
-          <span class="plant-pot">🪴</span>
+    <!-- ================= QUESTS ================= -->
+    <section class="page" id="page-quests">
+      <div class="pad">
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:baseline;">
+            <div class="eyebrow" style="margin-bottom:2px;">Today's pookie quests ⚔️</div>
+            <div class="task-progress" id="taskProgress">0/0</div>
+          </div>
+          <div id="taskList" style="margin-top:8px;"></div>
         </div>
-        <div class="progress-wrap">
-          <div class="progress-track"><div class="progress-fill" id="plantFill" style="width:4%;"></div></div>
-          <div class="progress-caption"><span>planted 🌰</span><span id="plantPct"></span><span>I'm home 🥚</span></div>
+        <div class="add-row">
+          <input id="taskInput" placeholder="Add your own quest…" maxlength="40">
+          <button class="btn mint btn-sm" id="taskAddBtn">Add</button>
         </div>
-        <div class="water-week" id="waterWeek"></div>
-        <button class="btn sky" id="waterBtn">Water me 💧</button>
-      </div>
-      <div class="card" style="background:var(--mint-soft); border-color:#CBE9DB;">
-        <p style="font-size:13.5px; font-weight:800; line-height:1.65; color:#3E8E6E;">
-          This little plant grows as my homecoming gets closer — but only if you water it every day.
-          And yes, I can see how well you're taking care of it. No pressure 👀
-        </p>
       </div>
     </section>
 
-    <!-- ================= TODOS ================= -->
-    <section class="page" id="page-todos">
-      <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:baseline;">
-          <div class="eyebrow" style="margin-bottom:2px;">Today's pookie quests ⚔️</div>
-          <div class="task-progress" id="taskProgress">0/0</div>
+    <!-- ================= US ================= -->
+    <section class="page" id="page-us">
+      <div class="pad">
+        <div class="card compose">
+          <div class="eyebrow">Our little feed 💭 (we both can reply)</div>
+          <textarea id="thoughtInput" placeholder="Brain dump anything… I'm nosy (affectionate)"></textarea>
+          <button class="btn lilac" id="thoughtBtn">Post it 💜</button>
         </div>
-        <div id="taskList" style="margin-top:8px;"></div>
+        <div id="thoughtList"></div>
+        <div class="card" style="margin-top:6px;">
+          <div class="eyebrow">Our little museum 🎀</div>
+          <div id="anniList"></div>
+          <div class="add-row" style="margin-top:10px;">
+            <input id="anniName" placeholder="A day worth remembering" maxlength="24">
+          </div>
+          <div class="add-row" style="margin-top:8px;">
+            <input id="anniDate" type="date">
+            <button class="btn btn-sm" id="anniAddBtn">Add</button>
+          </div>
+        </div>
       </div>
-      <div class="add-row">
-        <input id="taskInput" placeholder="Add your own quest…" maxlength="40">
-        <button class="btn mint btn-sm" id="taskAddBtn">Add</button>
-      </div>
-    </section>
-
-    <!-- ================= THOUGHTS ================= -->
-    <section class="page" id="page-thoughts">
-      <div class="card compose">
-        <div class="eyebrow">Random thoughts 💭 (I read these)</div>
-        <textarea id="thoughtInput" placeholder="Brain dump anything… I'm nosy (affectionate)"></textarea>
-        <button class="btn" id="thoughtBtn" style="background:var(--lilac); box-shadow:0 4px 0 var(--lilac-dk);">Post it 💜</button>
-      </div>
-      <div id="thoughtList"></div>
     </section>
   </main>
 
   <nav>
-    <button id="tab-home" class="on" data-p="home"><span class="nico">🏠</span><span>Home</span></button>
+    <button id="tab-home" class="on" data-p="home"><span class="nico">🏡</span><span>Home</span></button>
     <button id="tab-today" data-p="today"><span class="nico">☀️</span><span>Today</span></button>
-    <button id="tab-plant" data-p="plant"><span class="nico">🌱</span><span>Plant</span></button>
-    <button id="tab-todos" data-p="todos"><span class="nico">✅</span><span>Quests</span></button>
-    <button id="tab-thoughts" data-p="thoughts"><span class="nico">💭</span><span>Blog</span></button>
+    <button id="tab-quests" data-p="quests"><span class="nico">⚔️</span><span>Quests</span></button>
+    <button id="tab-us" data-p="us"><span class="nico">💭</span><span>Us</span></button>
   </nav>
 </div>
 
 <div id="praise">
   <div class="pj">🥳</div>
   <h2>ALL QUESTS DONE!</h2>
-  <p id="praiseLine">I'm SO proud of you. Officially the best boyfriend in (at least) two time zones.</p>
+  <p>I'm SO proud of you. Officially the best boyfriend in (at least) two time zones.</p>
   <button class="btn" onclick="document.getElementById('praise').style.display='none'">Thanks, I know 😌</button>
 </div>
 <div id="toast"></div>
 
 <script type="module">
 /* ============================================================
-   POOMAGOTCHI — his side 🌱
-   Demo mode: data lives in localStorage.
-   To go live: paste the Firebase config below (same in lab.html)
+   POOMAGOTCHI 2.0 — his side 🌱  (scene edition, phase 1)
    ============================================================ */
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyAWxyFz5zHp9u0CEzVMOzBli0Dn6k_Nrk4",
@@ -405,34 +426,30 @@ const FIREBASE_CONFIG = {
   appId: "1:219991223537:web:12d4f00a3757554a87cd50"
 };
 
-/* ---------- data layer (Firebase w/ localStorage fallback) ---------- */
 let fs = null, fsDoc, fsSetDoc, fsOnSnapshot;
 const localSubs = {};
 if (FIREBASE_CONFIG) {
-  const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
-  const { getFirestore, doc, setDoc, onSnapshot } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
-  fs = getFirestore(initializeApp(FIREBASE_CONFIG));
-  fsDoc = doc; fsSetDoc = setDoc; fsOnSnapshot = onSnapshot;
+  try {
+    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+    const { getFirestore, doc, setDoc, onSnapshot } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+    fs = getFirestore(initializeApp(FIREBASE_CONFIG));
+    fsDoc = doc; fsSetDoc = setDoc; fsOnSnapshot = onSnapshot;
+  } catch(e) { console.warn('firebase offline, using local mode', e); }
 }
 const DB = {
   subscribe(key, cb) {
-    if (fs) { fsOnSnapshot(fsDoc(fs, 'pookie', key), s => cb(s.exists() ? s.data().v : null)); }
-    else {
-      (localSubs[key] = localSubs[key] || []).push(cb);
-      cb(DB._lget(key));
-    }
+    if (fs) { fsOnSnapshot(fsDoc(fs, 'pookie', key), s => cb(s.exists() ? s.data().v : null)); return; }
+    (localSubs[key] = localSubs[key] || []).push(cb);
+    cb(DB._lget(key));
   },
   async set(key, v) {
-    if (fs) { await fsSetDoc(fsDoc(fs, 'pookie', key), { v }); }
-    else {
-      localStorage.setItem('pk_' + key, JSON.stringify(v));
-      (localSubs[key] || []).forEach(cb => cb(v));
-    }
+    if (fs) { await fsSetDoc(fsDoc(fs, 'pookie', key), { v }); return; }
+    localStorage.setItem('pk_' + key, JSON.stringify(v));
+    (localSubs[key] || []).forEach(cb => cb(v));
   },
   _lget(key) { try { const s = localStorage.getItem('pk_' + key); return s === null ? null : JSON.parse(s); } catch(e){ return null; } }
 };
 
-/* ---------- helpers ---------- */
 const $ = id => document.getElementById(id);
 const pad = n => String(n).padStart(2, '0');
 function dateKey(d = new Date()) { return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
@@ -440,79 +457,295 @@ function seededRand(seed) { let h = 0; for (const c of seed) h = (h * 31 + c.cha
   return () => { h = (h * 1664525 + 1013904223) >>> 0; return h / 4294967296; }; }
 function toast(t) { const el = $('toast'); el.textContent = t; el.style.display = 'block';
   clearTimeout(el._t); el._t = setTimeout(() => el.style.display = 'none', 1800); }
-function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
 
-/* ---------- state (live-updated by subscriptions) ---------- */
+/* ---------- state ---------- */
 let meta = { herName:'Pookie', hisName:'Bub', returnDate:'2026-08-25', anniversary:'2025-04-04',
              plantStart:'2026-07-02', sign:'aries', hisTz:'America/New_York', herTz:'Asia/Shanghai' };
-let hearts = { count: 0 };
-let tasks = null;          // {list:[{id,emoji,text,byHim}]}
-let checks = {};           // {taskId:true}
-let plant = { watered: {} };
-let thoughts = { list: [] };
-let note = null, sched = null;
-
+let hearts = { count: 0, log: [] };
+let tasks = null, checks = {}, plant = { watered: {} }, thoughts = { list: [] };
+let note = null, sched = null, noteReply = null;
+let wxHis = null, wxHer = null;
 const DEFAULT_TASKS = { list: [
-  { id:'gym',   emoji:'💪', text:'Work out' },
-  { id:'zh',    emoji:'🀄', text:'Practice Chinese' },
+  { id:'gym', emoji:'💪', text:'Work out' },
+  { id:'zh', emoji:'🀄', text:'Practice Chinese' },
   { id:'water', emoji:'🚰', text:'Drink enough water' },
-  { id:'text',  emoji:'📱', text:'Text your pookie' },
+  { id:'text', emoji:'📱', text:'Text your pookie' },
 ]};
 
 /* ---------- nav ---------- */
-document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('nav button').forEach(x => x.classList.remove('on'));
-  $('page-' + b.dataset.p).classList.add('active'); b.classList.add('on');
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => showPage(b.dataset.p));
+function showPage(p) {
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(el => el.classList.remove('on'));
+  $('page-' + p).classList.add('active');
+  $('tab-' + p).classList.add('on');
+}
+
+/* ---------- SCENE: sky ---------- */
+const SKY = {
+  night: { sky:'#2E3A5F', horizon:'#46538A', shade:.28, stars:1, sun:0, moon:1 },
+  dawn:  { sky:'#F5BCCB', horizon:'#FFE3C2', shade:0, stars:0, sun:1, moon:0 },
+  day:   { sky:'#AEDCF5', horizon:'#DFF2FD', shade:0, stars:0, sun:1, moon:0 },
+  dusk:  { sky:'#F0A47E', horizon:'#FFD9A8', shade:.08, stars:0, sun:1, moon:0 },
+};
+function skyPhase(h) { return h < 5 ? 'night' : h < 8 ? 'dawn' : h < 17 ? 'day' : h < 20.5 ? 'dusk' : 'night'; }
+function hisHour() {
+  const parts = new Intl.DateTimeFormat('en-US', { hour:'numeric', minute:'numeric', hour12:false, timeZone: meta.hisTz }).formatToParts(new Date());
+  const h = +parts.find(p => p.type==='hour').value, m = +parts.find(p => p.type==='minute').value;
+  return h + m/60;
+}
+function initStars() {
+  const g = $('stars');
+  if (g.childNodes.length) return;
+  const r = seededRand('stars');
+  for (let i = 0; i < 26; i++) {
+    const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    c.setAttribute('cx', Math.round(r()*390));
+    c.setAttribute('cy', Math.round(r()*260));
+    c.setAttribute('r', (r()*1.3 + .5).toFixed(1));
+    c.setAttribute('fill', '#FFF6D8');
+    g.appendChild(c);
+  }
+}
+function renderSky() {
+  initStars();
+  const h = hisHour();
+  const ph = skyPhase(h);
+  const s = SKY[ph];
+  $('sky').setAttribute('fill', s.sky);
+  $('horizon').setAttribute('fill', s.horizon);
+  $('shade').setAttribute('opacity', s.shade);
+  $('stars').setAttribute('opacity', s.stars);
+  $('sun').setAttribute('opacity', s.sun);
+  $('moonG').setAttribute('opacity', s.moon);
+  const dayFrac = Math.max(0, Math.min(1, (h - 6) / 14));
+  const sunX = 60 + dayFrac * 270, sunY = 150 - Math.sin(dayFrac * Math.PI) * 95;
+  $('sun').setAttribute('cx', Math.round(sunX)); $('sun').setAttribute('cy', Math.round(sunY));
+}
+
+/* ---------- SCENE: weather ---------- */
+const WX_EMOJI = c => c===0?'☀️':c<=2?'🌤️':c===3?'☁️':c<=48?'🌫️':c<=67?'🌧️':c<=77?'❄️':c<=82?'🌧️':c<=86?'🌨️':'⛈️';
+function renderWeatherFx() {
+  const g = $('weatherFx');
+  g.innerHTML = '';
+  if (!wxHis) return;
+  const c = wxHis.code;
+  $('cloudExtra').setAttribute('opacity', c >= 3 ? 1 : 0);
+  const NS = 'http://www.w3.org/2000/svg';
+  const r = seededRand('wx' + c);
+  if ((c >= 51 && c <= 67) || (c >= 80 && c <= 82) || c >= 95) {
+    for (let i = 0; i < 22; i++) {
+      const l = document.createElementNS(NS, 'line');
+      const x = Math.round(r()*390);
+      l.setAttribute('x1', x); l.setAttribute('x2', x - 4);
+      l.setAttribute('y1', 0); l.setAttribute('y2', 14);
+      l.setAttribute('stroke', '#8FC3E8'); l.setAttribute('stroke-width', '2.2');
+      l.setAttribute('stroke-linecap', 'round'); l.setAttribute('class', 'rain');
+      l.style.animationDelay = (r()*1).toFixed(2) + 's';
+      g.appendChild(l);
+    }
+  } else if ((c >= 71 && c <= 77) || (c >= 85 && c <= 86)) {
+    for (let i = 0; i < 18; i++) {
+      const f = document.createElementNS(NS, 'circle');
+      f.setAttribute('cx', Math.round(r()*390)); f.setAttribute('cy', 0);
+      f.setAttribute('r', (r()*2 + 1.5).toFixed(1)); f.setAttribute('fill', '#FFFFFF');
+      f.setAttribute('class', 'snow');
+      f.style.animationDelay = (r()*5).toFixed(2) + 's';
+      g.appendChild(f);
+    }
+  } else if (c >= 45 && c <= 48) {
+    const fog = document.createElementNS(NS, 'rect');
+    fog.setAttribute('x', 0); fog.setAttribute('y', 240); fog.setAttribute('width', 390);
+    fog.setAttribute('height', 160); fog.setAttribute('fill', '#FFFFFF'); fog.setAttribute('opacity', '.4');
+    g.appendChild(fog);
+  }
+}
+async function loadWeather() {
+  try {
+    const r1 = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=42.12&longitude=-71.18&current=temperature_2m,weather_code&timezone=America%2FNew_York&temperature_unit=fahrenheit`);
+    const j1 = await r1.json();
+    wxHis = { code: j1.current.weather_code, temp: Math.round(j1.current.temperature_2m) };
+  } catch(e) {}
+  try {
+    const r2 = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=39.90&longitude=116.41&current=temperature_2m,weather_code&timezone=Asia%2FShanghai`);
+    const j2 = await r2.json();
+    wxHer = { code: j2.current.weather_code, temp: Math.round(j2.current.temperature_2m) };
+  } catch(e) {}
+  renderWeatherFx(); renderHerSky();
+}
+function renderHerSky() {
+  const t = new Intl.DateTimeFormat('en-US', { hour:'numeric', minute:'2-digit', hour12:true, timeZone: meta.herTz }).format(new Date()).replace(' ','');
+  $('herSky').textContent = wxHer ? `🇨🇳 her sky · ${WX_EMOJI(wxHer.code)} ${wxHer.temp}° · ${t}` : `🇨🇳 her sky · ${t}`;
+}
+
+/* ---------- SCENE: Pooma ---------- */
+function plantProgress() {
+  const a = new Date(meta.plantStart + 'T00:00:00'), b = new Date(meta.returnDate + 'T00:00:00');
+  return Math.max(0, Math.min(1, (Date.now() - a) / (b - a)));
+}
+function poomaMood() {
+  const w = plant.watered || {};
+  if (w[dateKey()]) return 'happy';
+  if (w[dateKey(new Date(Date.now() - 864e5))]) return 'thirsty';
+  return 'wilt';
+}
+const MOUTHS = {
+  happy: 'M -6 -110 Q 0 -103 6 -110',
+  thirsty: 'M -5 -107 Q 0 -105 5 -107',
+  wilt: 'M -5 -105 Q 0 -110 5 -105',
+  joy: 'M -6 -111 Q 0 -101 6 -111',
+};
+function renderPooma() {
+  const p = plantProgress();
+  const scale = .55 + p * .6;
+  $('stageWrap').setAttribute('transform', `translate(195,436) scale(${scale.toFixed(3)})`);
+  const budScale = p < .3 ? .55 : p < .55 ? .75 : p < .78 ? .9 : 1;
+  $('budHeart').setAttribute('transform', `scale(${budScale})`);
+  $('budHeart').style.transformOrigin = '0px -86px';
+  $('budHeart').style.transformBox = 'view-box';
+  const mood = poomaMood();
+  $('poomaG').classList.toggle('wilt', mood === 'wilt');
+  $('mouth').setAttribute('d', MOUTHS[mood] || MOUTHS.happy);
+  $('budHeart').setAttribute('fill', mood === 'wilt' ? '#D99BAC' : '#FF7A9E');
+  ['leafL','leafR'].forEach(id => $(id).setAttribute('fill', mood === 'wilt' ? '#9DC4B0' : '#7BD8B0'));
+  const w = plant.watered || {};
+  $('waterBtn2').disabled = !!w[dateKey()];
+  $('waterBtn2').textContent = w[dateKey()] ? '💧 Watered ✓' : '💧 Water';
+  $('chipWater').classList.toggle('done', !!w[dateKey()]);
+  $('chipWaterTxt').textContent = w[dateKey()] ? 'Pooma watered' : 'Pooma is thirsty';
+  let streak = 0;
+  for (let i = 0; ; i++) {
+    const k = dateKey(new Date(Date.now() - i*864e5));
+    if (w[k]) streak++; else if (i === 0) continue; else break;
+    if (i > 400) break;
+  }
+  window._streak = streak;
+}
+/* blink loop */
+setInterval(() => {
+  $('poomaG').classList.add('blink');
+  setTimeout(() => $('poomaG').classList.remove('blink'), 160);
+}, 3800);
+
+/* pooma speech bubble */
+function poomaSpeak(txt) {
+  const el = $('poomaSay');
+  el.textContent = txt;
+  const scene = $('scene').getBoundingClientRect();
+  el.style.left = '50%'; el.style.top = (scene.height * .38) + 'px';
+  el.style.opacity = 1;
+  clearTimeout(el._t); el._t = setTimeout(() => el.style.opacity = 0, 2000);
+}
+const POOMA_LINES = ['She felt that 💗','Sent to her heart ✈️','I miss her too…','+1 to the love counter!','She`s probably missing you right now too','Recorded. She WILL see this 👀'];
+
+/* tap pooma = miss her */
+$('poomaG').addEventListener('click', e => {
+  const log = (hearts.log || []).slice(-199);
+  log.push(Date.now());
+  DB.set('hearts', { count: (hearts.count || 0) + 1, log, last: Date.now() });
+  $('poomaG').classList.remove('bounce'); void $('poomaG').getBoundingClientRect();
+  $('poomaG').classList.add('bounce');
+  for (let i = 0; i < 6; i++) {
+    const s = document.createElement('span');
+    s.className = 'heart-fly';
+    s.textContent = ['💗','💕','🩷','💖','✨'][Math.floor(Math.random()*5)];
+    s.style.left = (e.clientX - 35 + Math.random()*70) + 'px';
+    s.style.top = (e.clientY - 20) + 'px';
+    s.style.animationDelay = (Math.random()*.3) + 's';
+    document.body.appendChild(s); setTimeout(() => s.remove(), 2300);
+  }
+  poomaSpeak(POOMA_LINES[Math.floor(Math.random()*POOMA_LINES.length)]);
 });
 
-/* ---------- HOME ---------- */
-function renderHome() {
-  $('cdDate').textContent = `✈️  ${new Date(meta.returnDate + 'T00:00:00')
-    .toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' })}`;
+/* water */
+$('waterBtn2').onclick = () => {
+  const w = { ...(plant.watered || {}) }; w[dateKey()] = true;
+  DB.set('plant', { watered: w, lastWatered: Date.now() });
+  const scene = $('scene');
+  for (let i = 0; i < 8; i++) {
+    const d = document.createElement('span');
+    d.className = 'drop2'; d.textContent = '💧';
+    d.style.left = (42 + Math.random()*16) + '%';
+    d.style.top = (scene.getBoundingClientRect().height * .45) + 'px';
+    d.style.animationDelay = (Math.random()*.5) + 's';
+    scene.appendChild(d); setTimeout(() => d.remove(), 1600);
+  }
+  setTimeout(() => { $('mouth').setAttribute('d', MOUTHS.joy); poomaSpeak('Glug glug… thank you!! 🌱'); }, 600);
+};
+
+/* mailbox */
+$('mailboxG').addEventListener('click', () => showPage('today'));
+function renderMailbox() {
+  const unopened = note && note.text && localStorage.getItem('pk_noteOpened') !== JSON.stringify(dateKey());
+  $('mailboxG').classList.toggle('hasmail', !!unopened);
+  $('mailDot').setAttribute('opacity', unopened ? 1 : 0);
+  $('mailNum').setAttribute('opacity', unopened ? 1 : 0);
+  $('chipNote').classList.toggle('done', !unopened && !!(note && note.text));
+  $('chipNoteTxt').textContent = unopened ? "A note is waiting 💌" : (note && note.text) ? 'Note opened' : 'No note yet today';
 }
+$('chipNote').onclick = () => showPage('today');
+$('chipWater').onclick = () => { if (!$('waterBtn2').disabled) $('waterBtn2').click(); };
+
+/* greeting */
+function renderGreeting() {
+  const h = Math.floor(hisHour());
+  const g = h < 5 ? 'It`s late… dream of me 🌙' : h < 12 ? 'Morning, sunshine ☀️ One day closer.'
+    : h < 17 ? 'Afternoon check-in 🍵' : h < 22 ? 'Evening! Wind down time 🌆' : 'Go to bed soon, or else 😤';
+  $('greetBubble').textContent = g;
+}
+
+/* ---------- countdown + clocks ---------- */
 function tick() {
   const now = new Date();
   const diff = new Date(meta.returnDate + 'T00:00:00') - now;
-  if (diff <= 0) { $('cdLabel').textContent = `I'M HOME!! COME GET ME 🎉`;
-    $('cdD').textContent = 0; $('cdH').textContent = $('cdM').textContent = $('cdS').textContent = '00'; }
-  else {
-    $('cdD').textContent = Math.floor(diff / 864e5);
-    $('cdH').textContent = pad(Math.floor(diff % 864e5 / 36e5));
-    $('cdM').textContent = pad(Math.floor(diff % 36e5 / 6e4));
-    $('cdS').textContent = pad(Math.floor(diff % 6e4 / 1e3));
+  if (diff <= 0) {
+    $('signDays').textContent = '0';
+    $('cdLine').innerHTML = `<b>I'M HOME!! COME GET ME 🎉</b>`;
+  } else {
+    const d = Math.floor(diff / 864e5);
+    $('signDays').textContent = d;
+    $('cdLine').innerHTML = `<b>${d}</b> days <b>${pad(Math.floor(diff%864e5/36e5))}</b>:<b>${pad(Math.floor(diff%36e5/6e4))}</b>:<b>${pad(Math.floor(diff%6e4/1e3))}</b> until I'm home ✈️ ${meta.returnDate.slice(5).replace('-','.')}`;
   }
   $('togetherDays').textContent = Math.floor((now - new Date(meta.anniversary + 'T00:00:00')) / 864e5) + 1;
   const ft = tz => new Intl.DateTimeFormat('en-US', { hour:'numeric', minute:'2-digit', hour12:true, timeZone:tz }).format(now).replace(' ','');
   const fd = tz => new Intl.DateTimeFormat('en-US', { weekday:'short', month:'short', day:'numeric', timeZone:tz }).format(now);
   $('clockHis').textContent = ft(meta.hisTz); $('clockHisD').textContent = fd(meta.hisTz);
   $('clockHer').textContent = ft(meta.herTz); $('clockHerD').textContent = fd(meta.herTz);
-  const h = now.getHours();
-  $('greeting').textContent = h < 5 ? 'It’s late… dream of me 🌙' : h < 12 ? 'Morning, sunshine ☀️ One day closer.'
-    : h < 17 ? 'Afternoon check-in 🍵 Doing okay?' : h < 22 ? 'Evening! Time to wind down 🌆' : 'Go to bed soon, or else 😤';
 }
-tick(); setInterval(tick, 1000);
 
-$('missBtn').onclick = e => {
-  DB.set('hearts', { count: (hearts.count || 0) + 1, last: Date.now() });
-  for (let i = 0; i < 6; i++) {
-    const s = document.createElement('span'); s.className = 'heart-fly';
-    s.textContent = ['💗','💕','🩷','💖','✨'][Math.floor(Math.random()*5)];
-    s.style.left = (e.clientX - 35 + Math.random()*70) + 'px';
-    s.style.animationDelay = (Math.random()*.35) + 's';
-    document.body.appendChild(s); setTimeout(() => s.remove(), 2400);
-  }
-};
-
-/* ---------- TODAY ---------- */
+/* ---------- TODAY: note + reply ---------- */
 $('todayDate').innerHTML = new Date().toLocaleDateString('en-US', { weekday:'long' }) +
   ', <span>' + new Date().toLocaleDateString('en-US', { month:'long', day:'numeric' }) + '</span>';
-
+function noteOpened() { return localStorage.getItem('pk_noteOpened') === JSON.stringify(dateKey()); }
 function renderNote() {
-  if (note && note.text) { $('noteText').textContent = note.text;
-    $('noteSign').textContent = `— your ${meta.herName} ♡`; }
-  else { $('noteText').textContent = 'I haven’t written today’s note yet… check back soon 🕊️';
-    $('noteSign').textContent = ''; }
+  const z = $('noteZone');
+  if (!note || !note.text) {
+    z.innerHTML = '<div class="empty">I haven`t written today`s note yet… check back soon 🕊️</div>';
+    renderMailbox(); return;
+  }
+  if (!noteOpened()) {
+    z.innerHTML = `<div class="note-sealed" id="openNote"><span class="env">💌</span><p>Tap to open today's note</p></div>`;
+    $('openNote').onclick = () => { localStorage.setItem('pk_noteOpened', JSON.stringify(dateKey())); renderNote(); };
+  } else {
+    let replyHtml;
+    if (noteReply && noteReply.text) {
+      replyHtml = `<div class="reply-sent"><div class="rmeta">YOUR REPLY ✓ delivered to her lab</div>${esc(noteReply.text)}</div>`;
+    } else {
+      replyHtml = `<textarea id="replyInput" placeholder="Write back… she'll get it in her lab 📮"></textarea>
+        <button class="btn btn-sm" id="replySend" style="margin-left:auto;">Send reply 📮</button>`;
+    }
+    z.innerHTML = `<div class="note-text">${esc(note.text)}</div>
+      <div class="note-sign">— your ${esc(meta.herName)} ♡</div>
+      <div class="reply-zone">${replyHtml}</div>`;
+    const btn = $('replySend');
+    if (btn) btn.onclick = () => {
+      const v = $('replyInput').value.trim(); if (!v) return;
+      DB.set('notereply-' + dateKey(), { text: v, ts: Date.now() });
+      toast('Reply sent to her lab 📮');
+    };
+  }
+  renderMailbox();
 }
 function renderSched() {
   const items = (sched && sched.items) || [];
@@ -522,7 +755,7 @@ function renderSched() {
     : '<div class="empty">No plans posted yet today ✨</div>';
 }
 
-/* daily horoscope — real data from horoscope-app-api (sign is set in Pookie Lab) */
+/* horoscope */
 const SIGNS = { aries:'♈', taurus:'♉', gemini:'♊', cancer:'♋', leo:'♌', virgo:'♍',
   libra:'♎', scorpio:'♏', sagittarius:'♐', capricorn:'♑', aquarius:'♒', pisces:'♓' };
 let horoLoaded = null;
@@ -536,11 +769,10 @@ async function loadHoroscope() {
     const j = await r.json();
     $('hText').textContent = j.data.horoscope;
   } catch(e) {
-    $('hText').textContent = 'The stars are unreachable right now 🌌 — check back when you’re online.';
+    $('hText').textContent = 'The stars are unreachable right now 🌌 — check back when you`re online.';
     horoLoaded = null;
   }
 }
-/* lucky color & number — deterministic from the date (numerology-style), same result all day */
 const F_COLORS = [['Coral pink','#FF7A9E'],['Mint green','#57C79B'],['Sky blue','#6EC6F5'],['Butter yellow','#FFC94D'],
   ['Lilac','#B79CF2'],['Peach','#FFB088'],['Sage','#9CBF88'],['Cloud white','#F4F1EC'],['Cocoa','#9C6B4F'],['Rose red','#E8556D']];
 function renderFortune() {
@@ -551,85 +783,7 @@ function renderFortune() {
 }
 renderFortune();
 
-/* weather */
-const WX_ICON = c => c===0?'☀️':c<=2?'🌤️':c===3?'☁️':c<=48?'🌫️':c<=57?'🌦️':c<=67?'🌧️':c<=77?'❄️':c<=82?'🌦️':c<=86?'🌨️':'⛈️';
-async function loadWx(lat, lon, tz, p) {
-  try {
-    const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=${encodeURIComponent(tz)}&temperature_unit=fahrenheit`);
-    const j = await r.json();
-    $(p+'Ico').textContent = WX_ICON(j.current.weather_code);
-    $(p+'Temp').textContent = Math.round(j.current.temperature_2m) + '°F';
-    $(p+'Range').textContent = `${Math.round(j.daily.temperature_2m_min[0])}° / ${Math.round(j.daily.temperature_2m_max[0])}°`;
-  } catch(e) { $(p+'Temp').textContent = '–'; $(p+'Ico').textContent = '📡'; }
-}
-loadWx(42.12, -71.18, 'America/New_York', 'wxUs');
-loadWx(39.90, 116.41, 'Asia/Shanghai', 'wxCn');
-
-/* ---------- PLANT ---------- */
-const STAGES = [
-  { at:0,   emoji:'🌰', size:38,  name:'A tiny seed',      },
-  { at:.10, emoji:'🌱', size:52,  name:'A hopeful sprout'  },
-  { at:.30, emoji:'🌿', size:72,  name:'Getting leafy!'    },
-  { at:.55, emoji:'☘️', size:92,  name:'Growing strong'    },
-  { at:.78, emoji:'🌷', size:108, name:'A bud! Almost…'    },
-];
-function plantProgress() {
-  const a = new Date(meta.plantStart + 'T00:00:00'), b = new Date(meta.returnDate + 'T00:00:00');
-  return Math.max(0, Math.min(1, (Date.now() - a) / (b - a)));
-}
-function renderPlant() {
-  const p = plantProgress();
-  const el = $('plantEmoji');
-  if (p >= 1) { el.textContent = '🥚'; el.style.fontSize = '96px';
-    $('plantStage').textContent = 'It bloomed… an EGG?!';
-    $('plantMood').textContent = 'Come get me — we’ll write the rest of the story together 💛';
-    $('waterBtn').style.display = 'none';
-  } else {
-    let st = STAGES[0]; for (const s of STAGES) if (p >= s.at) st = s;
-    el.textContent = st.emoji; el.style.fontSize = st.size + 'px';
-    $('plantStage').textContent = st.name;
-    const today = dateKey(), yest = dateKey(new Date(Date.now() - 864e5));
-    const w = plant.watered || {};
-    el.classList.remove('wilt');
-    if (w[today]) $('plantMood').textContent = 'Watered today — thriving, just like us 🥰';
-    else if (w[yest]) $('plantMood').textContent = 'A little thirsty… water me? 🥺';
-    else { $('plantMood').textContent = 'WILTING. I can see this, you know 🥀'; el.classList.add('wilt'); }
-    $('waterBtn').style.display = 'block';
-    $('waterBtn').disabled = !!w[today];
-    $('waterBtn').textContent = w[today] ? 'Watered today ✓' : 'Water me 💧';
-  }
-  $('plantFill').style.width = Math.max(4, Math.round(p*100)) + '%';
-  $('plantPct').textContent = Math.round(p*100) + '% grown';
-  /* streak + last 7 days */
-  const w = plant.watered || {};
-  let streak = 0; for (let i = 0; ; i++) {
-    const k = dateKey(new Date(Date.now() - i*864e5));
-    if (w[k]) streak++; else if (i === 0) continue; else break;
-    if (i > 400) break;
-  }
-  $('streakNum').textContent = streak;
-  let week = '';
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(Date.now() - i*864e5), k = dateKey(d);
-    week += `<div class="wday ${i===0?'today':''}"><div class="dot ${w[k]?'yes':''}">${w[k]?'💧':''}</div>
-      ${d.toLocaleDateString('en-US',{weekday:'narrow'})}</div>`;
-  }
-  $('waterWeek').innerHTML = week;
-}
-$('waterBtn').onclick = () => {
-  const w = { ...(plant.watered || {}) }; w[dateKey()] = true;
-  DB.set('plant', { watered: w, lastWatered: Date.now() });
-  const scene = $('plantScene');
-  for (let i = 0; i < 7; i++) {
-    const d = document.createElement('span'); d.className = 'drop'; d.textContent = '💧';
-    d.style.left = (34 + Math.random()*32) + '%'; d.style.bottom = (90 + Math.random()*60) + 'px';
-    d.style.animationDelay = (Math.random()*.5) + 's';
-    scene.appendChild(d); setTimeout(() => d.remove(), 1600);
-  }
-  toast('Glug glug… it looks happier 🌱');
-};
-
-/* ---------- TODOS ---------- */
+/* ---------- QUESTS ---------- */
 function renderTasks() {
   if (!tasks) return;
   const list = tasks.list || [];
@@ -641,7 +795,7 @@ function renderTasks() {
       <span class="task-emoji">${t.emoji || '⭐'}</span>
       <span class="task-text">${esc(t.text)}</span>
       ${t.byHim ? `<button class="task-del" data-del="${t.id}">✕</button>` : ''}
-    </div>`).join('') : '<div class="empty">No quests yet — I’ll add some 👀</div>';
+    </div>`).join('') : '<div class="empty">No quests yet — I`ll add some 👀</div>';
   $('taskList').querySelectorAll('.task-check').forEach(el => el.onclick = () => toggleTask(el.dataset.id));
   $('taskList').querySelectorAll('[data-del]').forEach(el => el.onclick = () => {
     DB.set('tasks', { list: tasks.list.filter(t => t.id !== el.dataset.del) });
@@ -669,47 +823,99 @@ $('taskAddBtn').onclick = () => {
   $('taskInput').value = '';
 };
 
-/* ---------- THOUGHTS ---------- */
+/* ---------- US: feed with replies ---------- */
+let openReplyFor = null;
 function renderThoughts() {
   const list = thoughts.list || [];
-  $('thoughtList').innerHTML = list.length ? list.map(t =>
-    `<div class="thought"><p>${esc(t.text)}</p>
-      <div class="meta"><span>${new Date(t.ts).toLocaleDateString('en-US',{month:'short',day:'numeric'})} ·
-      ${new Date(t.ts).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}</span>
-      <button data-tdel="${t.id}">delete</button></div></div>`).join('')
-    : '<div class="empty">Nothing yet. First thought free 💭</div>';
+  $('thoughtList').innerHTML = list.length ? list.map(t => {
+    const replies = (t.replies || []).map(r =>
+      `<div class="reply-item"><span class="rwho ${r.who === 'her' ? 'her' : 'him'}">${r.who === 'her' ? esc(meta.herName) : 'you'}</span>
+       <p>${esc(r.text)}</p></div>`).join('');
+    const replyBox = openReplyFor === t.id ?
+      `<div class="reply-box"><input id="rin-${t.id}" placeholder="Reply…" maxlength="200">
+       <button class="btn lilac btn-sm" data-rsend="${t.id}">↩</button></div>` : '';
+    return `<div class="post">
+      <p class="body">${esc(t.text)}</p>
+      <div class="meta">
+        <span>${new Date(t.ts).toLocaleDateString('en-US',{month:'short',day:'numeric'})} ·
+        ${new Date(t.ts).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}</span>
+        <span><button class="rp" data-reply="${t.id}">💬 reply${(t.replies||[]).length ? ' ' + t.replies.length : ''}</button>
+        <button data-tdel="${t.id}">delete</button></span>
+      </div>
+      ${replies ? `<div class="replies">${replies}</div>` : ''}
+      ${replyBox}
+    </div>`;
+  }).join('') : '<div class="empty">Nothing yet. First thought free 💭</div>';
   $('thoughtList').querySelectorAll('[data-tdel]').forEach(el => el.onclick = () => {
     DB.set('thoughts', { list: thoughts.list.filter(t => t.id !== el.dataset.tdel) });
+  });
+  $('thoughtList').querySelectorAll('[data-reply]').forEach(el => el.onclick = () => {
+    openReplyFor = openReplyFor === el.dataset.reply ? null : el.dataset.reply;
+    renderThoughts();
+    const inp = $('rin-' + el.dataset.reply); if (inp) inp.focus();
+  });
+  $('thoughtList').querySelectorAll('[data-rsend]').forEach(el => el.onclick = () => {
+    const id = el.dataset.rsend;
+    const inp = $('rin-' + id);
+    const v = inp.value.trim(); if (!v) return;
+    const list = thoughts.list.map(t => t.id === id ?
+      { ...t, replies: [ ...(t.replies || []), { who:'him', text:v, ts:Date.now() } ] } : t);
+    openReplyFor = null;
+    DB.set('thoughts', { list });
   });
 }
 $('thoughtBtn').onclick = () => {
   const v = $('thoughtInput').value.trim(); if (!v) return;
-  DB.set('thoughts', { list: [ { id:'t' + Date.now(), text:v, ts:Date.now() }, ...(thoughts.list || []) ] });
-  $('thoughtInput').value = ''; toast('Posted — I’m definitely already reading it 💜');
+  DB.set('thoughts', { list: [ { id:'t' + Date.now(), text:v, ts:Date.now(), replies:[] }, ...(thoughts.list || []) ] });
+  $('thoughtInput').value = ''; toast('Posted — I`m definitely already reading it 💜');
 };
 
-/* ---------- subscriptions (must run after all definitions) ---------- */
-DB.subscribe('meta', v => { if (v) meta = { ...meta, ...v }; renderHome(); renderPlant(); loadHoroscope(); });
-DB.subscribe('hearts', v => { hearts = v || { count:0 }; $('heartTotal').textContent = hearts.count;
-  $('missCounter').textContent = hearts.count ? `You've missed me ${hearts.count} time${hearts.count>1?'s':''} 💘` : ''; });
+/* ---------- US: anniversaries ---------- */
+function getAnnis() { return DB._lget('annis_cache') || []; }
+let annis = [];
+function renderAnnis() {
+  const now = new Date(); now.setHours(0,0,0,0);
+  $('anniList').innerHTML = annis.length ? annis.map((a, i) => {
+    const d = new Date(a.date + 'T00:00:00');
+    const diff = Math.round((d - now) / 864e5);
+    const cnt = diff > 0 ? diff : diff === 0 ? '🎉' : -diff;
+    const lbl = diff > 0 ? 'days to go' : diff === 0 ? 'TODAY!' : 'days ago';
+    return `<div class="anni-item"><span class="anni-emoji">${a.emoji || '🎀'}</span>
+      <div class="anni-info"><div class="anni-name">${esc(a.name)}</div><div class="anni-date">${a.date}</div></div>
+      <div class="anni-count"><b>${cnt}</b><span>${lbl}</span></div>
+      <button class="task-del" data-adel="${i}">✕</button></div>`;
+  }).join('') : '<div class="empty">Add the days that made us, us 🎀</div>';
+  $('anniList').querySelectorAll('[data-adel]').forEach(el => el.onclick = () => {
+    annis.splice(+el.dataset.adel, 1);
+    DB.set('annis', { list: annis });
+  });
+}
+$('anniAddBtn').onclick = () => {
+  const name = $('anniName').value.trim(), date = $('anniDate').value;
+  if (!name || !date) { toast('Name and date both needed'); return; }
+  annis.push({ emoji:'🎀', name, date });
+  annis.sort((a, b) => a.date.localeCompare(b.date));
+  DB.set('annis', { list: annis });
+  $('anniName').value = ''; $('anniDate').value = '';
+};
+
+/* ---------- subscriptions ---------- */
+DB.subscribe('meta', v => { if (v) meta = { ...meta, ...v }; tick(); renderSky(); renderGreeting(); renderPooma(); renderHerSky(); loadHoroscope(); });
+DB.subscribe('hearts', v => { hearts = v || { count:0, log:[] }; $('heartTotal').textContent = hearts.count || 0; });
 DB.subscribe('tasks', v => { tasks = v || DEFAULT_TASKS; renderTasks(); });
 DB.subscribe('check-' + dateKey(), v => { checks = (v && v.done) || {}; renderTasks(); });
-DB.subscribe('plant', v => { plant = v || { watered:{} }; renderPlant(); });
+DB.subscribe('plant', v => { plant = v || { watered:{} }; renderPooma(); });
 DB.subscribe('thoughts', v => { thoughts = v || { list: [] }; renderThoughts(); });
 DB.subscribe('note-' + dateKey(), v => { note = v; renderNote(); });
+DB.subscribe('notereply-' + dateKey(), v => { noteReply = v; renderNote(); });
 DB.subscribe('sched-' + dateKey(), v => { sched = v; renderSched(); });
+DB.subscribe('annis', v => { annis = (v && v.list) || []; renderAnnis(); });
 
-/* ---------- PWA ---------- */
+/* ---------- boot ---------- */
+tick(); setInterval(tick, 1000);
+renderSky(); renderGreeting(); setInterval(() => { renderSky(); renderGreeting(); renderHerSky(); }, 60000);
+loadWeather(); setInterval(loadWeather, 30 * 60000);
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
-
-/* ---------- demo seed (only when empty & no Firebase) ---------- */
-if (!fs && !DB._lget('note-' + dateKey())) {
-  DB.set('note-' + dateKey(), { text: 'Good morning bub ☀️ I dreamt about our hotpot date. Eat properly today or I’ll know. Love you the most!' });
-  DB.set('sched-' + dateKey(), { items: [
-    { time:'10:00', text:'Coffee with Ivy ☕' },
-    { time:'14:00', text:'Studio time — new project!' },
-    { time:'21:00', text:'Calling YOU 📞 don’t be late' } ] });
-}
 </script>
 </body>
 </html>
