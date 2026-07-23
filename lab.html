@@ -72,6 +72,16 @@
   .thought { background:var(--prim-soft); border-radius:18px 18px 18px 5px; padding:13px 16px; margin-bottom:10px; }
   .thought p { font-size:14.5px; font-weight:700; line-height:1.65; white-space:pre-wrap; }
   .thought .meta { font-size:11px; font-weight:900; color:var(--sub); margin-top:7px; }
+  .linkish { border:none; background:none; color:var(--prim-dk); cursor:pointer; font-weight:900;
+    font-size:11px; font-family:inherit; padding:0 2px; }
+  .replies { margin-top:9px; border-left:3px solid #DFD2F3; padding-left:11px; }
+  .reply-item { margin-bottom:7px; }
+  .reply-item .rwho { font-size:10.5px; font-weight:900; }
+  .reply-item .rwho.her { color:var(--pink-dk); }
+  .reply-item .rwho.him { color:var(--sky-dk); }
+  .reply-item p { font-size:13px; font-weight:700; line-height:1.5; white-space:pre-wrap; }
+  .reply-box { display:flex; gap:7px; margin-top:9px; }
+  .reply-box input { padding:8px 12px; font-size:13px; border-radius:12px; }
   .empty { text-align:center; color:var(--sub); font-size:13px; font-weight:800; padding:16px 0; }
   .date-nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
   .date-nav button { font-family:var(--disp); font-weight:800; font-size:18px; border:2px solid var(--line);
@@ -117,7 +127,7 @@
         <div id="dTaskList"><div class="empty">Loading…</div></div>
       </div>
       <div class="card">
-        <div class="eyebrow">His latest thoughts 💭</div>
+        <div class="eyebrow">Our little feed 💭 (tap reply to talk back)</div>
         <div id="dThoughts"><div class="empty">Nothing yet</div></div>
       </div>
     </section>
@@ -133,6 +143,7 @@
         <div class="eyebrow">Note to him for this day 💌</div>
         <textarea class="note-area" id="noteArea" placeholder="Write him something sweet (or bossy)…"></textarea>
         <button class="btn" id="noteSave" style="margin-top:10px;">Save note ♡</button>
+        <div id="hisReplyZone"></div>
       </div>
       <div class="card">
         <div class="eyebrow">Your plans this day 🗓️ (he sees these)</div>
@@ -267,13 +278,36 @@ DB.subscribe('hearts', v => { $('dHearts').textContent = (v && v.count) || 0; })
 DB.subscribe('tasks', v => { tasks = v || { list: [] }; renderDashTasks(); renderQuests(); });
 DB.subscribe('check-' + dateKey(new Date()), v => { checksToday = (v && v.done) || {}; renderDashTasks(); });
 DB.subscribe('plant', v => { plant = v || { watered:{} }; renderDashPlant(); });
-DB.subscribe('thoughts', v => {
-  const list = (v && v.list) || [];
-  $('dThoughts').innerHTML = list.length ? list.slice(0, 8).map(t =>
-    `<div class="thought"><p>${esc(t.text)}</p><div class="meta">${new Date(t.ts).toLocaleString('en-US',
-      { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' })}</div></div>`).join('')
-    : '<div class="empty">He hasn’t posted yet 💭</div>';
-});
+let feed = [], openReplyFor = null;
+DB.subscribe('thoughts', v => { feed = (v && v.list) || []; renderFeed(); });
+function renderFeed() {
+  $('dThoughts').innerHTML = feed.length ? feed.slice(0, 20).map(t => {
+    const replies = (t.replies || []).map(r =>
+      `<div class="reply-item"><span class="rwho ${r.who === 'her' ? 'her' : 'him'}">${r.who === 'her' ? 'you' : esc(meta.hisName)}</span>
+       <p>${esc(r.text)}</p></div>`).join('');
+    const box = openReplyFor === t.id ?
+      `<div class="reply-box"><input id="rin-${t.id}" maxlength="200" placeholder="Reply…">
+       <button class="btn-mini" data-rsend="${t.id}">↩</button></div>` : '';
+    return `<div class="thought"><p>${esc(t.text)}</p>
+      <div class="meta">${new Date(t.ts).toLocaleString('en-US', { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' })}
+      · <button class="linkish" data-reply="${t.id}">💬 reply${(t.replies || []).length ? ' ' + (t.replies || []).length : ''}</button></div>
+      ${replies ? `<div class="replies">${replies}</div>` : ''}${box}</div>`;
+  }).join('') : '<div class="empty">He hasn’t posted yet 💭</div>';
+  $('dThoughts').querySelectorAll('[data-reply]').forEach(el => el.onclick = () => {
+    openReplyFor = openReplyFor === el.dataset.reply ? null : el.dataset.reply;
+    renderFeed();
+    const inp = $('rin-' + el.dataset.reply); if (inp) inp.focus();
+  });
+  $('dThoughts').querySelectorAll('[data-rsend]').forEach(el => el.onclick = () => {
+    const id = el.dataset.rsend;
+    const v = $('rin-' + id).value.trim(); if (!v) return;
+    const list = feed.map(t => t.id === id ?
+      { ...t, replies: [ ...(t.replies || []), { who:'her', text:v, ts:Date.now() } ] } : t);
+    openReplyFor = null;
+    DB.set('thoughts', { list });
+    toast('Reply sent 💬');
+  });
+}
 
 function renderDashTasks() {
   const list = tasks.list || [];
@@ -296,15 +330,23 @@ function renderDashPlant() {
 
 /* ---------- WRITE (note + schedule, per date) ---------- */
 let cur = new Date(); cur.setHours(0,0,0,0);
-let unsubNote = null, unsubSched = null, schedItems = [];
+let unsubNote = null, unsubSched = null, unsubReply = null, schedItems = [];
 function loadDay() {
   const k = dateKey(cur);
   const today = dateKey(new Date());
   $('curDateBig').textContent = k === today ? 'Today'
     : cur.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
   $('curDateSmall').textContent = k;
-  if (unsubNote) unsubNote(); if (unsubSched) unsubSched();
+  if (unsubNote) unsubNote(); if (unsubSched) unsubSched(); if (unsubReply) unsubReply();
   unsubNote = DB.subscribe('note-' + k, v => { $('noteArea').value = (v && v.text) || ''; });
+  unsubReply = DB.subscribe('notereply-' + k, v => {
+    $('hisReplyZone').innerHTML = v && v.text ?
+      `<div class="eyebrow" style="margin:16px 0 8px;">His reply 📮</div>
+       <div class="thought" style="background:var(--sky-soft); border-radius:18px 18px 5px 18px; margin-bottom:0;">
+         <p>${esc(v.text)}</p>
+         <div class="meta">${new Date(v.ts).toLocaleString('en-US', { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' })}</div>
+       </div>` : '';
+  });
   unsubSched = DB.subscribe('sched-' + k, v => {
     schedItems = (v && v.items) || [];
     $('schedItems').innerHTML = schedItems.length ? schedItems.map((i, idx) =>
