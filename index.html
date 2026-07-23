@@ -598,12 +598,8 @@ const MOUTHS = {
 };
 function renderPooma() {
   const p = plantProgress();
-  const scale = .55 + p * .6;
+  const scale = .72 + p * .42;
   $('stageWrap').setAttribute('transform', `translate(195,436) scale(${scale.toFixed(3)})`);
-  const budScale = p < .3 ? .55 : p < .55 ? .75 : p < .78 ? .9 : 1;
-  $('budHeart').setAttribute('transform', `scale(${budScale})`);
-  $('budHeart').style.transformOrigin = '0px -86px';
-  $('budHeart').style.transformBox = 'view-box';
   const mood = poomaMood();
   $('poomaG').classList.toggle('wilt', mood === 'wilt');
   $('mouth').setAttribute('d', MOUTHS[mood] || MOUTHS.happy);
